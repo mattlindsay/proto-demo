@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Woolworths – Grocery Store Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--g:#008446;--gd:#00723d;--gl:#126c34;--dk:#25251f;--dm:#283136;--gt:#616c71;--bg:#f5f5f5;--pg:#eee;--bd:#e8e8e8;--yl:#ffda00;--pk:#e6007e;--bi:#ebf7ff;--bl:#0074bc;--w:#fff;--cx:1312px;--px:80px;--search-bg:#f9f9f9;--search-w:560px;--header-h:89px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Roboto',sans-serif;color:var(--dk);background:var(--w);min-width:320px;-webkit-font-smoothing:antialiased;}
+
+/* ===== HEADER TOP ROW — always sticky ===== */
+.header-top{position:sticky;top:0;z-index:100;background:var(--w);border-bottom:1px solid var(--bd);padding:20px var(--px) 20px calc(var(--px) - 16px);display:flex;align-items:center;justify-content:space-between;gap:24px;}
+.header-left{display:flex;align-items:center;gap:16px;flex-shrink:0;padding-left:16px;}
+.logo{display:flex;align-items:center;flex-shrink:0;}
+.logo img{display:block;object-fit:contain;}
+.logo .logo-icon{display:none;height:48px;width:auto;}
+.logo .logo-full{height:48px;width:auto;}
+.header-divider{width:1px;height:24px;background:var(--bd);margin:0 8px;flex-shrink:0;}
+
+/* Explore Everyday dropdown */
+.explore-btn{display:flex;align-items:center;gap:8px;background:var(--w);border:none;padding:8px;border-radius:8px;font-family:inherit;font-size:14px;color:#3a474e;cursor:pointer;flex-shrink:0;height:36px;line-height:20px;}
+.explore-btn:hover{background:var(--bg);}
+.explore-btn svg{width:20px;height:20px;flex-shrink:0;}
+
+/* Search bar */
+.search-bar{display:flex;align-items:center;background:var(--search-bg);border:1px solid var(--bd);border-radius:8px;height:48px;padding:0 2px 0 12px;width:var(--search-w);flex-shrink:1;min-width:200px;}
+.search-bar input{flex:1;border:none;background:transparent;font-family:inherit;font-size:14px;color:var(--dk);outline:none;min-width:0;}
+.search-bar input::placeholder{color:var(--gt);}
+.search-bar button{width:44px;height:44px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:6px;}
+.search-bar button:hover{background:var(--bd);}
+.search-bar button svg{width:20px;height:20px;color:var(--dk);}
+
+/* Header right actions */
+.header-actions{display:flex;align-items:center;gap:16px;flex-shrink:0;}
+.header-action{display:flex;align-items:center;gap:8px;background:none;border:none;font-family:inherit;color:var(--dk);cursor:pointer;padding:0;text-decoration:none;white-space:nowrap;height:48px;}
+.header-action:hover .header-action-icon{background:#ebebeb;}
+.header-action-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:8px;background:#f4f4f4;}
+.header-action-icon img{width:24px;height:24px;}
+.header-action-label{display:flex;flex-direction:column;align-items:flex-start;line-height:1;}
+.header-action-label small{font-size:12px;font-weight:700;color:#666;}
+.header-action-label span{font-size:16px;font-weight:500;color:var(--dk);}
+
+/* Cart */
+.cart-btn{display:flex;align-items:center;gap:4px;background:#f4f4f4;border:none;font-family:inherit;font-size:16px;font-weight:500;color:var(--dk);cursor:pointer;padding:12px 16px;height:48px;white-space:nowrap;text-decoration:none;border-radius:8px;}
+.cart-btn:hover{background:#ebebeb;}
+
+/* ===== PRIMARY NAV — sticky, slides up/down with scroll direction ===== */
+.primary-nav{position:sticky;top:var(--header-h);z-index:99;background:var(--w);border-bottom:1px solid var(--bd);padding:0 var(--px) 0 calc(var(--px) - 16px);display:flex;align-items:center;justify-content:space-between;height:56px;transition:transform .25s ease,opacity .25s ease;}
+.primary-nav.nav-hidden{transform:translateY(-100%);opacity:0;pointer-events:none;}
+.nav-left{display:flex;align-items:center;gap:0;}
+.nav-right{display:flex;align-items:center;gap:0;}
+.nav-item{display:flex;align-items:center;gap:4px;padding:16px 16px;font-size:16px;color:var(--dk);text-decoration:none;background:var(--w);border:none;font-family:inherit;cursor:pointer;height:56px;white-space:nowrap;border-radius:0;}
+.nav-item:hover{background:var(--bg);color:var(--dk);}
+.nav-item.browse{font-weight:500;padding:16px;}
+.nav-item svg{width:20px;height:20px;flex-shrink:0;}
+.nav-item .chevron{width:16px;height:16px;}
+.nav-item .ext-icon{width:16px;height:16px;}
+.nav-more{display:none;}
+
+/* ===== FMS RIBBON — scrolls with page ===== */
+.fms-ribbon{background:var(--bg);border-bottom:1px solid var(--bd);padding:4px var(--px);display:flex;align-items:center;height:52px;}
+.fms-content{display:flex;align-items:center;gap:24px;width:100%;}
+.fms-method{display:flex;align-items:center;gap:8px;flex:1;padding:12px 0;}
+.fms-method svg{width:20px;height:20px;flex-shrink:0;color:var(--dk);}
+.fms-inner img{width:20px;height:20px;}
+.fms-method-label{font-size:14px;font-weight:500;color:var(--dk);}
+.fms-method-value{font-size:14px;color:var(--dk);}
+.fms-method-value a{color:var(--g);text-decoration:underline;cursor:pointer;}
+.fms-method-choose{font-size:14px;color:var(--g);text-decoration:none;cursor:pointer;font-weight:500;margin-left:auto;white-space:nowrap;}
+.fms-method-choose:hover{text-decoration:underline;}
+.fms-divider{width:1px;height:24px;background:var(--bd);flex-shrink:0;}
+
+/* ===== MAIN BODY ===== */
+.main-body{max-width:var(--cx);margin:0 auto;padding:24px var(--px);}
+
+/* Hero */
+.hero-carousel{width:100%;border-radius:8px;overflow:hidden;margin-bottom:24px;}
+.hero-carousel img{width:100%;display:block;}
+.hero-placeholder{width:100%;aspect-ratio:3.2/1;background:linear-gradient(135deg,var(--g) 0%,var(--gd) 100%);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--w);font-size:28px;font-weight:700;margin-bottom:24px;}
+
+/* Product grid */
+.section-title{font-size:24px;font-weight:700;color:var(--dk);margin-bottom:16px;}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.product-card{background:var(--w);border:1px solid var(--bd);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px;}
+.product-card .img-placeholder{width:100%;aspect-ratio:1/1;background:var(--pg);border-radius:4px;}
+.product-card .name{font-size:14px;color:var(--dk);line-height:1.4;}
+.product-card .price{font-size:16px;font-weight:700;color:var(--dk);}
+.product-card .unit{font-size:12px;color:var(--gt);}
+.product-card .add-btn{margin-top:auto;background:var(--g);color:var(--w);border:none;border-radius:4px;padding:10px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;text-align:center;}
+.product-card .add-btn:hover{background:var(--gd);}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--dm);color:var(--w);padding:40px 0 0;}
+.footer-inner{max-width:var(--cx);margin:0 auto;padding:0 var(--px);display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-bottom:32px;}
+.footer-col h4{font-size:14px;font-weight:700;margin-bottom:12px;}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.7);text-decoration:none;margin-bottom:8px;}
+.footer-col a:hover{color:var(--w);}
+.footer-bottom-bar{background:var(--dk);padding:16px var(--px);text-align:center;font-size:12px;color:rgba(255,255,255,.5);}
+
+/* ===== MOBILE HEADER — sticky wrapper ===== */
+.mobile-sticky{display:none;position:sticky;top:0;z-index:100;background:var(--w);}
+.mobile-header{background:var(--w);border-bottom:1px solid var(--bd);padding:12px var(--px);display:flex;align-items:center;justify-content:space-between;}
+.mobile-header-left{display:flex;align-items:center;gap:12px;}
+/* Browse button — hamburger + text in one rounded pill */
+.mobile-menu-btn{
+  display:flex;align-items:center;gap:8px;
+  background:#f4f4f4;border:none;cursor:pointer;
+  padding:12px 16px;border-radius:8px;
+  height:48px;font-family:inherit;font-size:16px;font-weight:500;
+  color:var(--dk);white-space:nowrap;
+}
+.mobile-menu-btn:hover{background:#ebebeb;}
+.mobile-menu-btn svg{width:24px;height:24px;flex-shrink:0;}
+
+.mobile-header-right{display:flex;align-items:center;gap:8px;}
+/* Lists & Account icon buttons */
+.mobile-icon-btn{
+  background:#f4f4f4;border:none;cursor:pointer;padding:12px;
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  width:48px;height:48px;
+}
+.mobile-icon-btn:hover{background:#ebebeb;}
+.mobile-icon-btn img{width:24px;height:24px;}
+
+.mobile-search{padding:8px var(--px) 12px;background:var(--w);border-bottom:1px solid var(--bd);}
+.mobile-search .search-bar{width:100%;min-width:0;border-radius:8px;}
+
+/* Mobile cart — icon + price, collapses to icon-only at narrow widths */
+.mobile-cart{display:flex;align-items:center;gap:4px;background:#f4f4f4;border:none;font-family:inherit;font-size:16px;font-weight:500;color:var(--dk);cursor:pointer;padding:12px 16px;height:48px;white-space:nowrap;text-decoration:none;border-radius:8px;}
+.mobile-cart:hover{background:#ebebeb;}
+.mobile-cart img{width:24px;height:24px;}
+
+/* Mobile FMS — scrolls with page */
+.fms-mobile{display:none;background:var(--bg);border-bottom:1px solid var(--bd);padding:0 var(--px);}
+.fms-mobile-row{display:flex;align-items:center;gap:0;}
+.fms-mobile-item{display:flex;align-items:flex-start;gap:8px;flex:1;padding:8px 0;}
+.fms-mobile-item svg,.fms-mobile-item img{width:20px;height:20px;flex-shrink:0;margin-top:1px;}
+.fms-mobile-item .fms-text{display:flex;flex-direction:column;gap:2px;}
+.fms-mobile-item .fms-label{font-size:14px;font-weight:700;color:var(--dk);line-height:20px;}
+.fms-mobile-item .fms-value{font-size:14px;color:var(--dk);line-height:20px;}
+.fms-mobile-item .fms-value a{color:var(--g);text-decoration:underline;}
+.fms-mobile-divider{width:1px;height:40px;background:var(--bd);flex-shrink:0;margin:0 16px;}
+
+
+/* ===== BREAKPOINTS ===== */
+
+/* XL: >1679px — wordmark logo, 80px padding */
+@media(min-width:1680px){
+  :root{--px:80px;--search-w:560px;}
+}
+
+/* Large: <=1679px — swap to icon logo, keep labels & full nav */
+@media(max-width:1679px){
+  :root{--px:80px;--search-w:560px;}
+  .logo .logo-full{display:none;}
+  .logo .logo-icon{display:block;}
+}
+
+/* Desktop: <=1440px */
+@media(max-width:1440px){
+  :root{--px:40px;--search-w:480px;}
+}
+
+/* Tablet desktop: <=1279px — hide labels, collapse nav, Stores into More */
+@media(max-width:1279px){
+  :root{--px:32px;--search-w:320px;}
+  .product-grid{grid-template-columns:repeat(3,1fr);}
+  .footer-inner{grid-template-columns:repeat(2,1fr);}
+  .header-action-label{display:none;}
+  .nav-collapse{display:none;}
+  .nav-collapse-stores{display:none;}
+  .nav-more{display:flex;}
+}
+
+/* Mobile (wide): <=1023px — switch to mobile header with wordmark logo */
+@media(max-width:1023px){
+  :root{--px:32px;}
+  .header-top{display:none;}
+  .primary-nav{display:none;}
+  .fms-ribbon{display:none;}
+  .mobile-sticky{display:block;}
+  .fms-mobile{display:block;}
+  .mobile-sticky .logo .logo-full{display:block;}
+  .mobile-sticky .logo .logo-icon{display:none;}
+}
+
+/* Mobile (narrow): <=767px — swap to small icon logo */
+@media(max-width:767px){
+  :root{--px:16px;}
+  .product-grid{grid-template-columns:repeat(2,1fr);}
+  .footer-inner{grid-template-columns:1fr;}
+  .hero-placeholder{font-size:18px;aspect-ratio:2/1;}
+  .section-title{font-size:20px;}
+  .mobile-sticky .logo .logo-full{display:none;}
+  .mobile-sticky .logo .logo-icon{display:block;}
+}
+
+/* Narrow mobile: <=413px — cart loses price text */
+@media(max-width:413px){
+  .mobile-cart .cart-text{display:none;}
+  .mobile-cart{padding:12px;width:48px;height:48px;justify-content:center;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- ===== DESKTOP / TABLET HEADER (sticky, visible >1023px) ===== -->
+<header class="header-top">
+  <div class="header-left">
+    <a class="logo" href="#">
+      <img class="logo-full" src="images/logo-lg.png" alt="Woolworths">
+      <img class="logo-icon" src="images/logo.png" alt="Woolworths">
+    </a>
+    <span class="header-divider"></span>
+    <button class="explore-btn">
+      Explore Everyday
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 8l4 4 4-4"/></svg>
+    </button>
+  </div>
+  <div class="search-bar">
+    <input type="text" placeholder="Search products, recipes &amp; ideas">
+    <button aria-label="Search">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8.5" cy="8.5" r="6"/><path d="M18 18l-5-5"/></svg>
+    </button>
+  </div>
+  <div class="header-actions">
+    <a class="header-action" href="#">
+      <span class="header-action-icon"><img src="images/icon-lists.svg" alt=""></span>
+      <span class="header-action-label"><small>Lists &amp;</small><span>Buy again</span></span>
+    </a>
+    <a class="header-action" href="#">
+      <span class="header-action-icon"><img src="images/icon-account.svg" alt=""></span>
+      <span class="header-action-label"><small>Log in or Sign up</small><span>My Account</span></span>
+    </a>
+    <a class="cart-btn" href="#">
+      <img src="images/icon-cart.svg" alt="" width="24" height="24">
+      $0.00
+    </a>
+  </div>
+</header>
+
+<!-- ===== PRIMARY NAVIGATION (sticky, hides on scroll down, visible >1023px) ===== -->
+<nav class="primary-nav" id="primaryNav">
+  <div class="nav-left">
+    <a href="#" class="nav-item browse">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      Browse products
+    </a>
+    <a href="#" class="nav-item">Specials &amp; catalogue <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg></a>
+    <a href="#" class="nav-item">Recipes &amp; ideas <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg></a>
+    <a href="#" class="nav-item nav-collapse">Get more value <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg></a>
+    <a href="#" class="nav-item nav-collapse">Ways to shop <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg></a>
+    <a href="#" class="nav-item">Help <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg></a>
+    <a href="#" class="nav-item nav-more">More <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg></a>
+  </div>
+  <div class="nav-right">
+    <a href="#" class="nav-item">Shop for business <svg class="ext-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4H3V4h4"/><path d="M8 1h7v7"/><path d="M15 1L7 9"/></svg></a>
+    <a href="#" class="nav-item nav-collapse-stores">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 1C6 1 3 4.5 3 8c0 5 7 11 7 11s7-6 7-11c0-3.5-3-7-7-7z"/><circle cx="10" cy="8" r="2.5"/></svg>
+      Stores
+    </a>
+  </div>
+</nav>
+
+<!-- ===== FMS RIBBON (scrolls with page, visible >1023px) ===== -->
+<div class="fms-ribbon">
+  <div class="fms-content">
+    <div class="fms-method">
+      <img src="images/icon-delivery.svg" alt="" width="20" height="20">
+      <span class="fms-method-label">Delivery to:</span>
+      <span class="fms-method-value"><a href="#">Set your delivery address</a></span>
+      <a href="#" class="fms-method-choose">Choose&nbsp;&rsaquo;</a>
+    </div>
+    <div class="fms-divider"></div>
+    <div class="fms-method">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><path d="M10 5v5l3 3"/></svg>
+      <span class="fms-method-label">Select a time:</span>
+      <span class="fms-method-value"><a href="#">View available times</a></span>
+      <a href="#" class="fms-method-choose">Choose&nbsp;&rsaquo;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MOBILE HEADER (sticky wrapper, visible <=1023px) ===== -->
+<div class="mobile-sticky">
+  <div class="mobile-header">
+    <div class="mobile-header-left">
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <span>Browse</span>
+      </button>
+    </div>
+    <a class="logo" href="#">
+      <img class="logo-full" src="images/logo-lg.png" alt="Woolworths">
+      <img class="logo-icon" src="images/logo.png" alt="Woolworths">
+    </a>
+    <div class="mobile-header-right">
+      <button class="mobile-icon-btn" aria-label="Lists">
+        <img src="images/icon-lists.svg" alt="" width="24" height="24">
+      </button>
+      <button class="mobile-icon-btn" aria-label="Account">
+        <img src="images/icon-account.svg" alt="" width="24" height="24">
+      </button>
+      <a class="mobile-cart" href="#">
+        <img src="images/icon-cart.svg" alt="" width="24" height="24">
+        <span class="cart-text">$0.00</span>
+      </a>
+    </div>
+  </div>
+  <div class="mobile-search">
+    <div class="search-bar">
+      <input type="text" placeholder="Search products, recipes &amp; ideas">
+      <button aria-label="Search">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8.5" cy="8.5" r="6"/><path d="M18 18l-5-5"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile FMS (scrolls with page, visible <=1023px) -->
+<div class="fms-mobile">
+  <div class="fms-mobile-row">
+    <div class="fms-mobile-item">
+      <img src="images/icon-delivery.svg" alt="" width="20" height="20">
+      <div class="fms-text">
+        <span class="fms-label">Delivery to:</span>
+        <span class="fms-value"><a href="#">Set your delivery address</a></span>
+      </div>
+    </div>
+    <div class="fms-mobile-divider"></div>
+    <div class="fms-mobile-item">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><path d="M10 5v5l3 3"/></svg>
+      <div class="fms-text">
+        <span class="fms-label">Select a time:</span>
+        <span class="fms-value"><a href="#">View available times</a></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-body">
+  <div class="hero-placeholder">
+    Fresh deals every week
+  </div>
+
+  <h2 class="section-title">Popular products</h2>
+  <div class="product-grid">
+    <div class="product-card">
+      <div class="img-placeholder"></div>
+      <div class="name">Woolworths Full Cream Milk 2L</div>
+      <div class="price">$2.90</div>
+      <div class="unit">$1.45 per litre</div>
+      <button class="add-btn">Add to cart</button>
+    </div>
+    <div class="product-card">
+      <div class="img-placeholder"></div>
+      <div class="name">Woolworths White Sandwich Sliced Bread 650g</div>
+      <div class="price">$2.40</div>
+      <div class="unit">$0.37 per 100g</div>
+      <button class="add-btn">Add to cart</button>
+    </div>
+    <div class="product-card">
+      <div class="img-placeholder"></div>
+      <div class="name">Woolworths Free Range Eggs 12 pack</div>
+      <div class="price">$5.50</div>
+      <div class="unit">$0.46 per egg</div>
+      <button class="add-btn">Add to cart</button>
+    </div>
+    <div class="product-card">
+      <div class="img-placeholder"></div>
+      <div class="name">Woolworths Bananas Per Kg</div>
+      <div class="price">$3.90</div>
+      <div class="unit">$3.90 per kg</div>
+      <button class="add-btn">Add to cart</button>
+    </div>
+    <div class="product-card">
+      <div class="img-placeholder"></div>
+      <div class="name">Woolworths Strawberries 250g Punnet</div>
+      <div class="price">$3.50</div>
+      <div class="unit">$14.00 per kg</div>
+      <button class="add-btn">Add to cart</button>
+    </div>
+    <div class="product-card">
+      <div class="img-placeholder"></div>
+      <div class="name">Woolworths Greek Style Yoghurt 1kg</div>
+      <div class="price">$5.00</div>
+      <div class="unit">$0.50 per 100g</div>
+      <button class="add-btn">Add to cart</button>
+    </div>
+    <div class="product-card">
+      <div class="img-placeholder"></div>
+      <div class="name">Woolworths Avocados Each</div>
+      <div class="price">$2.50</div>
+      <div class="unit">$2.50 each</div>
+      <button class="add-btn">Add to cart</button>
+    </div>
+    <div class="product-card">
+      <div class="img-placeholder"></div>
+      <div class="name">Woolworths Chicken Breast Fillets 500g</div>
+      <div class="price">$8.00</div>
+      <div class="unit">$16.00 per kg</div>
+      <button class="add-btn">Add to cart</button>
+    </div>
+  </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <a href="#">Browse products</a>
+      <a href="#">Specials &amp; catalogues</a>
+      <a href="#">Recipes &amp; ideas</a>
+      <a href="#">Woolworths brands</a>
+    </div>
+    <div class="footer-col">
+      <h4>Ways to shop</h4>
+      <a href="#">Delivery</a>
+      <a href="#">Pick up</a>
+      <a href="#">Direct to boot</a>
+      <a href="#">Everyday market</a>
+    </div>
+    <div class="footer-col">
+      <h4>Help &amp; support</h4>
+      <a href="#">Help centre</a>
+      <a href="#">Contact us</a>
+      <a href="#">Product recalls</a>
+      <a href="#">Accessibility</a>
+    </div>
+    <div class="footer-col">
+      <h4>About Woolworths</h4>
+      <a href="#">About us</a>
+      <a href="#">Careers</a>
+      <a href="#">Privacy policy</a>
+      <a href="#">Terms of use</a>
+    </div>
+  </div>
+  <div class="footer-bottom-bar">
+    &copy; 2024 Woolworths Group Limited. All rights reserved.
+  </div>
+</footer>
+
+<!-- ===== SCROLL DIRECTION NAV TOGGLE ===== -->
+<script>
+(function(){
+  var nav = document.getElementById('primaryNav');
+  var header = document.querySelector('.header-top');
+  var lastY = 0;
+  var ticking = false;
+
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var y = window.scrollY;
+      if(header.offsetParent !== null){
+        var headerH = header.offsetHeight;
+        document.documentElement.style.setProperty('--header-h', headerH + 'px');
+        if(y > headerH + 56){
+          if(y > lastY){ nav.classList.add('nav-hidden'); }
+          else { nav.classList.remove('nav-hidden'); }
+        } else { nav.classList.remove('nav-hidden'); }
+      }
+      lastY = y;
+      ticking = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, {passive:true});
+  if(header.offsetParent !== null){
+    document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+  }
+})();
+</script>
+
+</body>
+</html>

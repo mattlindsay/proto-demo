@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkbox Prototype</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f5f5f5;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .card {
+      background: white;
+      border: 8px solid black;
+      border-radius: 10px;
+      padding: 40px 32px;
+      width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-box {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #3b3b37;
+      border-radius: 4px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .checkbox-box svg {
+      display: none;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkbox-row input[type="checkbox"]:checked + .checkbox-box {
+      background: #008446;
+      border-color: #008446;
+    }
+
+    .checkbox-row input[type="checkbox"]:checked + .checkbox-box svg {
+      display: block;
+    }
+
+    .checkbox-label {
+      font-size: 16px;
+      font-weight: 400;
+      color: #25251f;
+      line-height: 24px;
+    }
+
+    .button {
+      margin-top: 8px;
+      height: 48px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: not-allowed;
+      background: #d2d2d2;
+      color: white;
+      transition: background 0.2s, cursor 0.2s;
+      width: 100%;
+    }
+
+    .button.active {
+      background: #008446;
+      cursor: pointer;
+    }
+
+    .button.active:hover {
+      background: #006d38;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <label class="checkbox-row">
+      <input type="checkbox" id="check1" />
+      <div class="checkbox-box">
+        <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 5L4.5 8.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="checkbox-label">Check 1</span>
+    </label>
+
+    <label class="checkbox-row">
+      <input type="checkbox" id="check2" />
+      <div class="checkbox-box">
+        <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 5L4.5 8.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="checkbox-label">Check 2</span>
+    </label>
+
+    <button class="button" id="submitBtn" disabled>Button label</button>
+  </div>
+
+  <script>
+    const check1 = document.getElementById('check1');
+    const check2 = document.getElementById('check2');
+    const btn = document.getElementById('submitBtn');
+
+    function updateButton() {
+      const bothChecked = check1.checked && check2.checked;
+      btn.disabled = !bothChecked;
+      btn.classList.toggle('active', bothChecked);
+    }
+
+    check1.addEventListener('change', updateButton);
+    check2.addEventListener('change', updateButton);
+  </script>
+</body>
+</html>
