@@ -120,8 +120,20 @@ h1{font-size:20px;margin-bottom:24px;}
     <input type="text" id="ctrl-title" value="Product title">
   </div>
   <div class="control">
-    <label for="ctrl-price">Unit price ($)</label>
+    <label for="ctrl-price" id="ctrl-price-label">Unit price ($)</label>
     <input type="number" id="ctrl-price" value="2.90" min="0" step="0.01">
+  </div>
+  <div class="control control-toggle">
+    <label id="ctrl-weight-on-label">Sold by weight</label>
+    <button type="button" class="toggle" id="ctrl-weight-on" role="switch" aria-checked="false" aria-labelledby="ctrl-weight-on-label">
+      <span class="toggle-thumb"></span>
+    </button>
+  </div>
+  <div class="control-group" id="ctrl-weight-fields" hidden>
+    <div class="control">
+      <label for="ctrl-weight">Starting weight (kg)</label>
+      <input type="number" id="ctrl-weight" value="0.35" min="0.35" max="10" step="0.05">
+    </div>
   </div>
   <div class="control control-toggle">
     <label id="ctrl-savings-on-label">Has Savings</label>
@@ -170,6 +182,14 @@ h1{font-size:20px;margin-bottom:24px;}
     var wasRow = tile.querySelector('.cart-tile-was');
     var wasAmountEl = tile.querySelector('.cart-tile-was .was-amount');
     var MIN = 1;
+    // Weighted products are held in whole grams so repeated taps can't drift
+    // into 0.4499999. 350g floor, 10kg ceiling, 50g a tap. The ceiling sits in
+    // one constant so the real per-product limits can replace it later.
+    var G_MIN = 350, G_MAX = 10000, G_STEP = 50;
+    // Only one of these is live at a time, per the Sold by weight toggle.
+    // Keeping both means flipping the toggle restores each mode's own starting
+    // point instead of carrying a count across as a weight.
+    var qty = MIN, grams = G_MIN;
 
     var savingsOn = document.getElementById('ctrl-savings-on');
     var savingsFields = document.getElementById('ctrl-savings-fields');
@@ -178,15 +198,53 @@ h1{font-size:20px;margin-bottom:24px;}
     var pointsOn = document.getElementById('ctrl-points-on');
     var pointsFields = document.getElementById('ctrl-points-fields');
     var pointsCtrl = document.getElementById('ctrl-points');
+    var weightOnCtrl = document.getElementById('ctrl-weight-on');
+    var weightFields = document.getElementById('ctrl-weight-fields');
+    var weightCtrl = document.getElementById('ctrl-weight');
+    var priceLabel = document.getElementById('ctrl-price-label');
 
     var POINTS_MIN = 10, POINTS_MAX = 100000, POINTS_STEP = 10;
 
-    // unitPrice is the per-item price set in the control panel; the tile
-    // always displays unitPrice * qty as the line total. wasUnitPrice is
-    // only meaningful while the Savings toggle is on.
+    // unitPrice is the rate set in the control panel: per item normally, per
+    // kilogram while Sold by weight is on. Either way the tile displays the
+    // rate times the amount in the stepper. wasUnitPrice is only meaningful
+    // while the Savings toggle is on, and is a rate in the same sense.
     var unitPrice = parseFloat(document.getElementById('ctrl-price').value) || 0;
 
     function round2(n){ return Math.round(n * 100) / 100; }
+
+    // toFixed rounds 1.575 down to 1.57, because the float sitting behind it is
+    // a hair under. Weights land on half-cents often (0.35kg at $4.50), so the
+    // cents get rounded explicitly before formatting.
+    function money(n){
+      return (Math.round(Number((n * 100).toPrecision(12))) / 100).toFixed(2);
+    }
+
+    function weightOn(){ return weightOnCtrl.getAttribute('aria-checked') === 'true'; }
+
+    // 0.35kg, 0.4kg, 1kg — trailing zeros trimmed, matching the Figma stepper.
+    function formatKg(g){
+      return (g / 1000).toFixed(2).replace(/\.?0+$/, '') + 'kg';
+    }
+
+    // Grams are always on the 50g ladder within range. Like the Was and Points
+    // fields, a typed value snaps only once it is committed, not mid-keystroke.
+    function snapGrams(g){
+      if (isNaN(g)) { g = G_MIN; }
+      g = Math.round(g / G_STEP) * G_STEP;
+      return clampGrams(g);
+    }
+
+    function clampGrams(g){
+      if (isNaN(g)) { g = G_MIN; }
+      return Math.min(G_MAX, Math.max(G_MIN, g));
+    }
+
+    function clampWeightField(){
+      var g = snapGrams(parseFloat(weightCtrl.value) * 1000);
+      weightCtrl.value = (g / 1000).toFixed(2);
+      return g;
+    }
 
     // A savings tile must always save at least 1c, so the Was price can
     // never sit at or below the unit price.
@@ -216,8 +274,10 @@ h1{font-size:20px;margin-bottom:24px;}
     }
 
     function render(){
-      var qty = parseInt(input.value, 10) || MIN;
-      amountEl.textContent = (unitPrice * qty).toFixed(2);
+      // One factor drives every money figure on the tile: a count of items in
+      // item mode, kilograms in weight mode.
+      var factor = weightOn() ? grams / 1000 : qty;
+      amountEl.textContent = money(unitPrice * factor);
 
       var showSavings = savingsOn.getAttribute('aria-checked') === 'true';
       if (showSavings) {
@@ -225,8 +285,8 @@ h1{font-size:20px;margin-bottom:24px;}
         // a negative saving before the field snaps on blur.
         var wasUnitPrice = Math.max(parseFloat(wasCtrl.value) || 0, minWasPrice());
         var savingsPerUnit = wasUnitPrice - unitPrice;
-        saveTag.textContent = 'Save $' + (savingsPerUnit * qty).toFixed(2);
-        wasAmountEl.textContent = '$' + (wasUnitPrice * qty).toFixed(2);
+        saveTag.textContent = 'Save $' + money(savingsPerUnit * factor);
+        wasAmountEl.textContent = '$' + money(wasUnitPrice * factor);
       }
       // Each tag owns its own visibility, since the row can now be opened by
       // savings or points independently.
@@ -247,21 +307,43 @@ h1{font-size:20px;margin-bottom:24px;}
       wasRow.hidden = !showSavings;
     }
 
-    function setQty(v){
-      v = Math.max(MIN, v);
-      input.value = v;
-      minus.disabled = (v <= MIN);
+    // v is in whichever unit the tile is currently in: grams or items.
+    function setAmount(v){
+      if (weightOn()) {
+        grams = clampGrams(v);
+        input.value = formatKg(grams);
+      } else {
+        qty = Math.max(MIN, v);
+        input.value = qty;
+      }
+      syncBounds();
       render();
     }
 
+    // Both buttons disable off the same bounds check, so the limits work only
+    // has to change what the bounds are.
+    function syncBounds(){
+      var on = weightOn();
+      minus.disabled = on ? (grams <= G_MIN) : (qty <= MIN);
+      plus.disabled = on ? (grams >= G_MAX) : false;
+      input.setAttribute('inputmode', on ? 'decimal' : 'numeric');
+      input.setAttribute('aria-label', on ? 'Weight in kilograms' : 'Quantity');
+    }
+
     minus.addEventListener('click', function(){
-      setQty((parseInt(input.value, 10) || MIN) - 1);
+      setAmount(weightOn() ? grams - G_STEP : qty - 1);
     });
     plus.addEventListener('click', function(){
-      setQty((parseInt(input.value, 10) || MIN) + 1);
+      setAmount(weightOn() ? grams + G_STEP : qty + 1);
     });
+    // Typing straight into the stepper. parseFloat reads "0.62kg" as 0.62, so
+    // the unit the field already shows doesn't have to be deleted first.
     input.addEventListener('change', function(){
-      setQty(parseInt(input.value, 10) || MIN);
+      if (weightOn()) {
+        setAmount(snapGrams(parseFloat(input.value) * 1000));
+      } else {
+        setAmount(parseInt(input.value, 10) || MIN);
+      }
     });
 
     // Preview-only: removes the tile from view. Real cart removal wires up
@@ -303,6 +385,30 @@ h1{font-size:20px;margin-bottom:24px;}
     });
     onlineCtrl.addEventListener('change', render);
 
+    // Sold by weight swaps the stepper into kilograms and re-reads the price
+    // field as a per-kg rate. Turning it off returns to a single item.
+    weightOnCtrl.addEventListener('click', function(){
+      var next = weightOnCtrl.getAttribute('aria-checked') !== 'true';
+      weightOnCtrl.setAttribute('aria-checked', String(next));
+      weightFields.hidden = !next;
+      priceLabel.textContent = next ? 'Unit price ($/kg)' : 'Unit price ($)';
+      if (next) {
+        setAmount(clampWeightField());
+      } else {
+        qty = MIN;
+        setAmount(MIN);
+      }
+    });
+    weightCtrl.addEventListener('input', function(){
+      var kg = parseFloat(weightCtrl.value);
+      // Off-ladder while typing, snapped on commit — the same deal as the Was
+      // price field.
+      if (!isNaN(kg)) { setAmount(clampGrams(Math.round(kg * 1000))); }
+    });
+    weightCtrl.addEventListener('change', function(){
+      setAmount(clampWeightField());
+    });
+
     // Points mirrors the savings toggle: reveals its own field and seeds a
     // starting value of 10 pts.
     pointsOn.addEventListener('click', function(){
@@ -318,7 +424,7 @@ h1{font-size:20px;margin-bottom:24px;}
       render();
     });
 
-    setQty(parseInt(input.value, 10) || MIN);
+    setAmount(MIN);
   });
 })();
 </script>
