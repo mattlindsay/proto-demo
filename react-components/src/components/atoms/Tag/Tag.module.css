@@ -1,0 +1,10 @@
+.tag{display:inline-flex;align-items:center;background:#ffda00;color:var(--dk);font-family:inherit;font-weight:700;font-size:12px;line-height:16px;padding:4px 8px;border-radius:4px;white-space:nowrap;}
+.online{background:#fffdd0;}
+/* Points tag carries the (white) Everyday Rewards mark. */
+.points{background:#d44500;color:var(--w);padding-left:4px;gap:4px;}
+.icon{width:16px;height:16px;flex-shrink:0;display:block;}
+
+/* Compact: declared after .points so its padding wins, then re-tightened for points */
+.compact{padding:2px 6px;font-size:11px;line-height:14px;}
+.points.compact{padding-left:3px;gap:3px;}
+.points.compact .icon{width:12px;height:12px;}

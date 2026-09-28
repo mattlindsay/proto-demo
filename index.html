@@ -13,6 +13,14 @@
   .proto-links { display:flex; flex-direction:column; gap:0.75rem; }
   a.proto-link { display:block; background:#1a1a19; color:#fff; text-decoration:none; padding:0.75rem 1rem; border-radius:10px; font-size:0.9rem; font-weight:500; }
   a.proto-link:hover { background:#333; }
+  h3 { font-size:0.8rem; font-weight:600; color:#1a1a19; text-transform:uppercase; letter-spacing:0.04em; margin:1.5rem 0 0.75rem; text-align:left; }
+  .react-instructions { margin-top:0.5rem; text-align:left; }
+  .react-instructions summary { list-style:none; cursor:pointer; font-size:0.8rem; font-weight:500; color:#6b6b67; padding:0.4rem 0; user-select:none; }
+  .react-instructions summary::-webkit-details-marker { display:none; }
+  .react-instructions summary::before { content:'▸'; display:inline-block; margin-right:0.4rem; transition:transform 0.15s; }
+  .react-instructions[open] summary::before { transform:rotate(90deg); }
+  .react-instructions ol { margin:0.5rem 0 0; padding:0.75rem 1rem 0.75rem 2rem; background:#f5f5f3; border-radius:10px; font-size:0.8rem; color:#3a3a38; line-height:1.7; }
+  .react-instructions code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.78rem; background:#e6e6e2; padding:0.1rem 0.35rem; border-radius:5px; }
 </style>
 </head>
 <body>
@@ -23,6 +31,18 @@
       <a class="proto-link" href="Woolworths-Home.html">View Woolworths Home →</a>
       <a class="proto-link" href="atoms.html">View Atoms – Cart Tile →</a>
     </div>
+    <h3>React</h3>
+    <div class="proto-links">
+      <a class="proto-link" href="http://localhost:5173">View components →</a>
+    </div>
+    <details class="react-instructions">
+      <summary>How to run</summary>
+      <ol>
+        <li>In a terminal, run <code>cd react-components</code>, then <code>npm run dev</code>.</li>
+        <li>Open <code>http://localhost:5173</code>. That's the playground.</li>
+        <li>Leave the terminal running while you view it. <code>Ctrl+C</code> stops it.</li>
+      </ol>
+    </details>
   </div>
 </body>
 </html>

@@ -1,0 +1,19 @@
+/* Width is set inline from stepperWidths.ts and never flexes, so the stepper is
+   identical on every tile in a list. The input absorbs the difference. */
+.stepper{display:flex;align-items:center;flex:0 0 auto;}
+.stepper button{width:36px;height:36px;flex-shrink:0;background:#f4f4f4;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;}
+.stepper button:hover{background:#ebebeb;}
+.stepper button:disabled{opacity:.4;cursor:not-allowed;}
+.stepper button:disabled:hover{background:#f4f4f4;}
+.minus{border-radius:8px 0 0 8px;}
+.plus{border-radius:0 8px 8px 0;}
+.plus img{width:24px;height:24px;display:block;}
+.minus img{width:11.68px;height:1.78px;display:block;}
+.stepper input{flex:1;min-width:0;height:36px;border:1px solid var(--bd);border-left:none;border-right:none;background:#f4f4f4;text-align:center;font-family:inherit;font-size:14px;font-weight:500;color:var(--dk);-moz-appearance:textfield;}
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+
+/* Compact layouts: 28px controls */
+.compact button,
+.compact input{height:28px;}
+.compact button{width:28px;}

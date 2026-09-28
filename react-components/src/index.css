@@ -1,0 +1,5 @@
+:root{--g:#008446;--dk:#25251f;--gt:#616c71;--bd:#e8e8e8;--w:#fff;--bg:#f5f5f5;--pg:#eee;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+/* Must beat display:flex rules in component modules, or [hidden] stays visible */
+[hidden]{display:none!important;}
+body{font-family:'Roboto',sans-serif;color:var(--dk);background:var(--bg);-webkit-font-smoothing:antialiased;}

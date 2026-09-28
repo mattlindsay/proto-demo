@@ -1,0 +1,8 @@
+.page{padding:40px;}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:20px;margin-bottom:24px;font-size:14px;}
+.controls label{display:flex;align-items:center;gap:6px;}
+.segmented{display:flex;background:#e9e9e9;border-radius:8px;padding:2px;gap:2px;}
+.segmented button{font-family:inherit;font-size:13px;font-weight:500;color:var(--gt);background:none;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;}
+.segmented .active{background:var(--w);color:var(--dk);box-shadow:0 1px 2px rgba(0,0,0,.1);}
+.slider{gap:10px;}
+.list{display:flex;flex-direction:column;gap:16px;}
