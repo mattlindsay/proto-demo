@@ -1,1 +1,4 @@
 .DS_Store
+
+# Licensed font files: keep local only (fonts/glider.css still references them)
+fonts/*.woff2

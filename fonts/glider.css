@@ -1,0 +1,21 @@
+/* Glider: shared @font-face for all HTML prototypes in this repo.
+   Link it with a path relative to your HTML file, e.g.
+     cart-prototype/index.html  ->  <link rel="stylesheet" href="../fonts/glider.css">
+     atoms.html (repo root)     ->  <link rel="stylesheet" href="fonts/glider.css">
+   Then use it: font-family: 'Glider', 'Roboto', system-ui, sans-serif; */
+
+@font-face {
+  font-family: 'Glider';
+  src: url('Glider-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Glider';
+  src: url('Glider-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

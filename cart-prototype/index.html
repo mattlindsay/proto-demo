@@ -6,6 +6,7 @@
 <title>Woolworths – Cart opening prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../fonts/glider.css">
 <style>
 :root{--g:#008446;--gd:#00723d;--gl:#126c34;--dk:#25251f;--dm:#283136;--gt:#616c71;--bg:#f5f5f5;--pg:#eee;--bd:#e8e8e8;--yl:#ffda00;--pk:#e6007e;--bi:#ebf7ff;--bl:#0074bc;--w:#fff;--cx:1312px;--px:80px;--search-bg:#f9f9f9;--search-w:560px;--header-h:89px;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -46,6 +47,10 @@ body{font-family:'Roboto',sans-serif;color:var(--dk);background:var(--w);min-wid
 /* Cart */
 .cart-btn{display:flex;align-items:center;gap:4px;background:#f4f4f4;border:none;font-family:inherit;font-size:16px;font-weight:500;color:var(--dk);cursor:pointer;padding:12px 16px;height:48px;white-space:nowrap;text-decoration:none;border-radius:8px;}
 .cart-btn:hover{background:#ebebeb;}
+/* Item-count badge (Figma 5237:56592) */
+.cart-btn,.mobile-cart{position:relative;}
+.cart-badge{position:absolute;top:-6px;right:-6px;min-width:24px;box-sizing:border-box;padding:2px 6px;border:2px solid #fff;border-radius:12px;background:#ca0000;color:#fff;font-size:12px;line-height:16px;font-weight:700;text-align:center;}
+.cart-badge[hidden]{display:none;}
 
 /* ===== PRIMARY NAV — sticky, slides up/down with scroll direction ===== */
 .primary-nav{position:sticky;top:var(--header-h);z-index:99;background:var(--w);border-bottom:1px solid var(--bd);padding:0 var(--px) 0 calc(var(--px) - 16px);display:flex;align-items:center;justify-content:space-between;height:56px;transition:transform .25s ease,opacity .25s ease;}
@@ -222,7 +227,7 @@ body{font-family:'Roboto',sans-serif;color:var(--dk);background:var(--w);min-wid
     --green-mid: #178841;
     --yellow: #ffda00;
     --font: 'Roboto', system-ui, sans-serif;
-    --font-brand: 'Fresh Sans', 'Roboto', system-ui, sans-serif;
+    --font-brand: 'Glider', 'Fresh Sans', 'Roboto', system-ui, sans-serif;
   
 }
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0;}
@@ -277,6 +282,11 @@ p{margin:0;}
   .roundel .ell { position: absolute; inset: 7.14%; }
   .roundel .bmsm { position: absolute; inset: 16.61% 26.87% 18.46% 27.3%; }
   .roundel .bmsm img, .roundel .ell img { width: 100%; height: 100%; }
+  /* Summer Price roundel (Figma 5237:56354): base + green ring + white disc + wordmark */
+  .rd-summer .g { position: absolute; inset: 5.36%; }
+  .rd-summer .w { position: absolute; inset: 11.61%; }
+  .rd-summer .t { position: absolute; left: 16.07%; right: 15.81%; top: calc(50% + 2.81px); transform: translateY(-50%); aspect-ratio: 76.29 / 35.615; }
+  .rd-summer span img { display: block; width: 100%; height: 100%; }
   .pt .tagsp { min-height: 112px; display: flex; flex-direction: column; }
   .pt .tags { height: 20px; margin: 0 4px 4px; }
   .pt .price { padding: 0 8px; }
@@ -284,6 +294,7 @@ p{margin:0;}
   .pt .price .sym { font-weight: 500; }
   .pt .price .num { font-family: var(--font-brand); font-weight: 500; font-size: 24px; line-height: 28px; }
   .pt .price .cup { color: var(--text-medium); }
+  .pt .price .was { color: var(--text-strong); }
   .pt .offer { padding: 4px; }
   .pt .offer div { position: relative; background: #fffdd0; border-radius: 8px; min-height: 28px; padding: 4px 28px 4px 6px; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
   .pt .offer img { position: absolute; right: 1px; top: 1px; width: 16px; height: 16px; }
@@ -295,6 +306,18 @@ p{margin:0;}
   .pt .add { flex: 1; height: 36px; border-radius: 8px; background: var(--green); color: #fff; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 8px 16px; }
   .pt .add:hover { background: #0d5127; }
   .pt .add img { width: 20px; height: 20px; }
+  .pt .add[aria-disabled="true"] { cursor: default; }
+  .pt .add[aria-disabled="true"]:hover { background: var(--green); }
+  /* Added state (Figma 5237:46283): outlined stepper replaces the green Add button */
+  .pt .gstep { flex: 1; min-width: 0; height: 36px; display: flex; }
+  .pt .gstep[hidden] { display: none; }
+  .pt .gstep button { width: 36px; flex: none; display: grid; place-items: center; background: #fff; border: 1px solid #25251f; }
+  .pt .gstep button:first-child { border-radius: 8px 0 0 8px; }
+  .pt .gstep button:last-child { border-radius: 0 8px 8px 0; }
+  .pt .gstep button:hover { background: #f4f4f4; }
+  .pt .gstep button img { width: 24px; height: 24px; }
+  .pt .gstep .gq { flex: 1; min-width: 0; display: grid; place-items: center; background: #fff; border: solid #25251f; border-width: 1px 0; font-size: 14px; line-height: 20px; font-weight: 500; color: #25251f; }
+  .pt .actions.added .add { display: none; }
   .mech { text-align: center; }
   .mech .mi { aspect-ratio: 188 / 201.4; overflow: hidden; }
   .mech .mi img { width: 100%; height: 100%; object-fit: cover; }
@@ -356,7 +379,10 @@ p{margin:0;}
   .group { border: 1px solid var(--border-weak); border-radius: 12px; overflow: hidden; }
   .group .ct { border: 0; border-radius: 0; }
   .group .ct + .ct { border-top: 1px solid var(--border-weak); }
-  .bmsm-promo { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 12px 12px 16px; background: #e8f3ec; position: relative; }
+  .bmsm-promo { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 12px 12px 16px; background: #fffbe5; position: relative; }
+  .bmsm-promo.on { background: #e8f3ec; }
+  .bmsm-promo:not(.on) .ck { display: none; }
+  .stepper button:disabled img { opacity: 1; }
   .bmsm-promo .l { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; line-height: 18px; position: relative; flex: 1; }
   .bmsm-promo .l .sp { width: 20px; height: 20px; }
   .bmsm-promo .l .ck { position: absolute; left: 12px; top: 10px; width: 12px; height: 12px; }
@@ -384,21 +410,65 @@ p{margin:0;}
   .plt .rm span { width: 24px; height: 24px; border-radius: 15px; background: var(--bg-chip); display: grid; place-items: center; }
   .plt .rm img { width: 12px; height: 12px; }
   .plt .save2 { align-self: flex-start; background: var(--yellow); border-radius: 2px; padding: 0 4px; font-size: 12px; line-height: 20px; font-weight: 700; }
-  .btns { display: flex; gap: 8px; padding: 8px; }
-  .btns button { flex: 1; height: 48px; border-radius: 8px; background: var(--bg-chip); font-weight: 500; font-size: 16px; }
-  .btns button.d { color: #c4251c; }
+  .btns { display: flex; gap: 16px; padding: 8px 16px 32px; background: #fff; }
+  .btns button { flex: 1; min-width: 0; height: 48px; padding: 12px 16px; border-radius: 8px; background: #f5f6f6; color: #3a474e; font-weight: 500; font-size: 16px; line-height: 24px; white-space: nowrap; }
+  .btns button.d { color: #ca0000; }
   .df { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; filter: drop-shadow(0 -4px 6px rgba(0,0,0,.06)); z-index: 3; }
-  .df .os { width: 100%; padding: 8px 16px; display: flex; align-items: center; justify-content: center; gap: 4px; color: var(--link); font-weight: 500; font-size: 14px; border-bottom: 1px solid var(--border-weak); }
+  .df .os { width: 100%; padding: 8px 16px; display: flex; align-items: center; justify-content: center; gap: 4px; color: #178841; font-weight: 400; font-size: 14px; line-height: 20px; border-bottom: 1px solid var(--border-weak); }
   .df .os img { width: 20px; height: 20px; }
   .df .tot { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 16px 8px; }
-  .df .tot .l b { display: block; font-family: var(--font-brand); font-weight: 500; font-size: 24px; line-height: 28px; color: var(--text-nav); }
+  .df .tot .l b { display: block; font-family: var(--font-brand); font-weight: 500; font-size: 20px; line-height: 26px; color: var(--text-nav); }
   .df .tot .l small { font-size: 12px; line-height: 16px; color: var(--text-medium); }
   .df .tot .rr { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-  .df .tot .rr b { font-family: var(--font-brand); font-weight: 500; font-size: 24px; line-height: 28px; }
-  .df .tot .sv { background: var(--yellow); border-radius: 2px; padding: 0 4px; font-size: 10px; line-height: 14px; font-weight: 700; letter-spacing: .2px; }
+  .df .tot .rr b { font-family: var(--font-brand); font-weight: 500; font-size: 20px; line-height: 26px; }
+  .df .tot .sv { background: var(--yellow); border-radius: 2px; padding: 3px 8px; font-size: 10px; line-height: 10px; font-weight: 700; text-transform: uppercase; }
   .df .co { margin: 0 16px 16px; width: calc(100% - 32px); height: 48px; border-radius: 8px; background: var(--green); color: #fff; font-weight: 500; font-size: 16px; }
   .df .co:hover { background: #0d5127; }
-  .empty { padding: 48px 16px; text-align: center; color: var(--text-medium); }
+  /* Empty cart (Figma 5221:42424): header only, no delivery/rewards rows, no footer */
+  .drawer.is-empty .dc { bottom: 0; padding-top: 0; }
+  .drawer.is-empty .dc-top, .drawer.is-empty .btns, .drawer.is-empty .df, .drawer.is-empty .dh .n { display: none; }
+  .empty-state[hidden] { display: none; }
+  .empty-state { min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; padding: 48px; background: #fff; }
+  .es-art { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-bottom: 16px; text-align: center; }
+  .es-art h3 { margin: 0; font-family: var(--font-brand); font-weight: 500; font-size: 24px; line-height: 32px; color: var(--text-strong); }
+  .es-art p { margin: 0; font-size: 16px; line-height: 24px; color: var(--text-medium); }
+  .es-ill { position: relative; width: 263px; height: 167px; flex: none; }
+  .es-ill > *, .es-ill span { position: absolute; display: block; transform: translateX(-50%); }
+  .es-ill img { display: block; width: 100%; height: 100%; max-width: none; }
+  .es-ill .g8 { bottom: 21.72px; height: 130.794px; width: 235.598px; left: calc(50% + 1.12px); }
+  .es-ill .fl1 { bottom: 45.67px; height: 118.226px; width: 81.569px; left: calc(50% - 62.96px); display: flex; align-items: center; justify-content: center; }
+  .es-ill .fl1 img { width: 55.646px; height: 107.486px; flex: none; transform: rotate(165deg) scaleY(-1); }
+  .es-ill .fl2 { bottom: 67.24px; height: 123px; width: 85.453px; left: calc(50% + 56.62px); display: flex; align-items: center; justify-content: center; }
+  .es-ill .fl2 img { width: 77.418px; height: 117.886px; flex: none; transform: rotate(-176deg) scaleY(-1); }
+  .es-ill .milk { bottom: 60.04px; height: 110.06px; width: 55.906px; left: calc(50% - 7.97px); }
+  .es-ill .apple { bottom: 59.78px; height: 67.899px; width: 53.79px; left: calc(50% + 42.83px); }
+  .es-ill .bag { bottom: 17.22px; height: 112.124px; width: 88.112px; left: calc(50% + .52px); }
+  .es-grid { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .es-tile { position: relative; min-height: 161px; padding: 0; text-align: left; background: var(--bg-secondary, #f9f9f9); border: 1px solid var(--border-weak); border-radius: 16px; cursor: pointer; font: inherit; }
+  .es-tile:hover { background: #f1f1f1; }
+  .es-wide { grid-column: 1 / span 2; }
+  .es-txt { position: absolute; left: 15px; right: 15px; top: 78px; display: flex; flex-direction: column; gap: 4px; }
+  .es-wide .es-txt { top: 86px; }
+  .es-txt b { font-size: 16px; line-height: 24px; font-weight: 600; color: var(--link); text-decoration: underline; text-underline-position: from-font; }
+  .es-txt small { font-size: 12px; line-height: 16px; color: var(--text-medium); }
+  .es-ico { position: absolute; left: 11px; top: 15px; width: 55px; height: 55px; }
+  .es-ico .orbs { position: absolute; left: -20.65%; top: -23.95%; width: 141.3%; height: 147.9%; max-width: none; }
+  .es-ico .cbg { position: absolute; left: calc(50% + .5px); top: 50%; width: 48px; height: 47px; transform: translate(-50%, -50%); max-width: none; }
+  .es-ico .bk { position: absolute; left: calc(50% + .5px); top: 50%; width: 32px; height: 32px; transform: translate(-50%, -50%); overflow: hidden; }
+  .es-ico .bk img { position: absolute; max-width: none; }
+  .es-ico .basket { left: .8px; top: .8px; width: 30.4px; height: 27.964px; }
+  .es-ico .glow { left: calc(50% + .43px); top: 3.12px; width: 20.107px; height: 20.88px; transform: translateX(-50%); }
+  .es-ico .plat { left: 7.15px; top: 2.35px; width: 17.787px; height: 17.787px; }
+  .es-ico .ai { left: 9.63px; top: 4.83px; width: 12.879px; height: 12.879px; }
+  .es-ico .cam { position: absolute; left: 15.42px; top: 16.22px; width: 25.17px; height: 22.548px; max-width: none; }
+  .es-beta { position: absolute; right: 12px; top: 11px; height: 14px; padding: 0 4px; border-radius: 18px; background: #9c9c9c; color: #fff; font-size: 9px; font-weight: 700; line-height: 14px; }
+  .es-stack .c { position: absolute; display: flex; align-items: center; justify-content: center; }
+  .es-stack .card { display: block; width: 44.81px; height: 44.81px; box-sizing: border-box; padding: 4px; background: #fff; border: 1px solid var(--border-weak); border-radius: 8px; filter: drop-shadow(0 2px 3px rgba(23,28,31,.17)); }
+  .es-stack .card img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .es-stack .c1 { left: 12px; top: 21.11px; width: 59.888px; height: 59.888px; transform: rotate(-25.92deg); }
+  .es-stack .c2 { left: 40.15px; top: 14px; width: 52.486px; height: 52.486px; transform: rotate(-10.92deg); }
+  .es-stack .c3 { left: 64.23px; top: 16.68px; width: 47.886px; height: 47.886px; transform: rotate(4.08deg); }
+  .es-stack .c4 { left: 90px; top: 21.48px; width: 56.997px; height: 56.997px; transform: rotate(19.08deg); }
 
   /* ---------- "Select a time" panel: slides over the cart, clipped by the drawer's rounded corners ---------- */
   .drawer { isolation: isolate; }
@@ -512,8 +582,9 @@ p{margin:0;}
       <span class="header-action-label"><small>Log in or Sign up</small><span>My Account</span></span>
     </a>
     <a class="cart-btn" href="#" data-open-cart aria-haspopup="dialog" aria-controls="drawer">
-      <img src="../images/icon-cart.svg" alt="" width="24" height="24">
-      $88.88
+      <img data-cart-icon src="assets/nav_cartEmpty.svg" alt="" width="24" height="24">
+      <span data-cart-total>$0.00</span>
+      <span class="cart-badge" data-cart-badge hidden></span>
     </a>
   </div>
 </header>
@@ -581,8 +652,9 @@ p{margin:0;}
         <img src="../images/icon-account.svg" alt="" width="24" height="24">
       </button>
       <a class="mobile-cart" href="#" data-open-cart aria-haspopup="dialog" aria-controls="drawer">
-        <img src="../images/icon-cart.svg" alt="" width="24" height="24">
-        <span class="cart-text">$88.88</span>
+        <img data-cart-icon src="assets/nav_cartEmpty.svg" alt="" width="24" height="24">
+        <span class="cart-text" data-cart-total>$0.00</span>
+        <span class="cart-badge" data-cart-badge hidden></span>
       </a>
     </div>
   </div>
@@ -661,12 +733,14 @@ p{margin:0;}
 
   <section class="grid" aria-label="Products">
     <!-- 1: Bananas -->
-    <article class="card"><div class="pt">
-      <div class="imgc"><div class="ai"><img src="assets/grid_imgArticleImage.png" alt=""></div></div>
-      <div class="tagsp"><div class="tags"></div>
-        <div class="price"><div class="big"><span class="sym">$</span><span class="num">0.81</span></div><div class="cup">$0.81 / 1ea</div></div></div>
+    <article class="card" data-sku="banana"><div class="pt">
+      <div class="imgc">
+        <div class="roundel rd-summer" role="img" aria-label="Summer Price"><img src="assets/pt_roundelBase.svg" alt=""><span class="g"><img src="assets/pt_roundelGreen.svg" alt=""></span><span class="w"><img src="assets/pt_roundelWhite.svg" alt=""></span><span class="t"><img src="assets/pt_roundelSummer.svg" alt=""></span></div>
+        <div class="ai"><img src="assets/grid_imgArticleImage.png" alt=""></div></div>
+      <div class="tagsp"><div class="tags"><span class="save">Save $0.08</span></div>
+        <div class="price"><div class="big"><span class="sym">$</span><span class="num">0.81</span></div><div class="cup">$0.81 / 1ea</div><div class="was">Was $0.91</div></div></div>
       <div class="desc">Cavendish Bananas each</div>
-      <div class="actions"><button class="lists" aria-label="Add to list"><img src="assets/grid_imgAddToList.svg" alt=""></button><button class="add" data-add>Add <img src="assets/grid_imgCartAdd.svg" alt=""></button></div>
+      <div class="actions"><button class="lists" aria-label="Add to list"><img src="assets/grid_imgAddToList.svg" alt=""></button><button class="add" type="button" data-sku-add>Add <img src="assets/grid_imgCartAdd.svg" alt=""></button><div class="gstep" hidden><button type="button" data-gminus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="gq">1</span><button type="button" data-gplus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div></div>
     </div></article>
     <!-- 2: Mech card -->
     <article class="card mech">
@@ -675,15 +749,13 @@ p{margin:0;}
       <button class="shop">Shop now</button>
     </article>
     <!-- 3: Avocado -->
-    <article class="card"><div class="pt">
+    <article class="card" data-sku="avocado"><div class="pt">
       <div class="imgc">
-        <div class="roundel"><img src="assets/grid_imgBase.svg" alt=""><span class="ell"><img src="assets/grid_imgEllipseGreen.svg" alt=""></span><span class="bmsm"><img src="assets/grid_imgBuyMoreSaveMore.svg" alt=""></span></div>
         <div class="ai"><img src="assets/grid_imgArticleImage1.png" alt=""></div></div>
       <div class="tagsp"><div class="tags"></div>
-        <div class="price"><div class="big"><span class="sym">$</span><span class="num">2.90</span></div><div class="cup">$2.90 / 1EA</div></div>
-        <div class="offer"><div><b>2 for $5</b><span>$2.50 / 1EA</span><img src="assets/grid_imgIcon.svg" alt=""></div></div></div>
-      <div class="desc">Hass Avocado each</div>
-      <div class="actions"><button class="lists" aria-label="Add to list"><img src="assets/grid_imgAddToList.svg" alt=""></button><button class="add" data-add>Add <img src="assets/grid_imgCartAdd.svg" alt=""></button></div>
+        <div class="price"><div class="big"><span class="sym">$</span><span class="num">2.90</span></div><div class="cup">$2.90 / 1EA</div></div></div>
+      <div class="desc">Avocado Shepard each</div>
+      <div class="actions"><button class="lists" aria-label="Add to list"><img src="assets/grid_imgAddToList.svg" alt=""></button><button class="add" type="button" data-sku-add>Add <img src="assets/grid_imgCartAdd.svg" alt=""></button><div class="gstep" hidden><button type="button" data-gminus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="gq">1</span><button type="button" data-gplus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div></div>
     </div></article>
     <!-- 4: Mango -->
     <article class="card"><div class="pt">
@@ -691,7 +763,7 @@ p{margin:0;}
       <div class="tagsp"><div class="tags"></div>
         <div class="price"><div class="big"><span class="sym">$</span><span class="num">2.90</span></div><div class="cup">$2.90 / 1EA</div></div></div>
       <div class="desc">Calypso Mango each</div>
-      <div class="actions"><button class="lists" aria-label="Add to list"><img src="assets/grid_imgAddToList.svg" alt=""></button><button class="add" data-add>Add <img src="assets/grid_imgCartAdd.svg" alt=""></button></div>
+      <div class="actions"><button class="lists" aria-label="Add to list"><img src="assets/grid_imgAddToList.svg" alt=""></button><button class="add" type="button" aria-disabled="true">Add <img src="assets/grid_imgCartAdd.svg" alt=""></button></div>
     </div></article>
     <!-- 5: Mech 2 -->
     <article class="card mech">
@@ -705,7 +777,7 @@ p{margin:0;}
       <div class="tagsp"><div class="tags"></div>
         <div class="price"><div class="big"><span class="sym">$</span><span class="num">3.90</span></div><div class="cup">$3.90 / 1EA</div></div></div>
       <div class="desc">Mango R2E2 each</div>
-      <div class="actions"><button class="lists" aria-label="Add to list"><img src="assets/grid_imgAddToList.svg" alt=""></button><button class="add" data-add>Add <img src="assets/grid_imgCartAdd.svg" alt=""></button></div>
+      <div class="actions"><button class="lists" aria-label="Add to list"><img src="assets/grid_imgAddToList.svg" alt=""></button><button class="add" type="button" aria-disabled="true">Add <img src="assets/grid_imgCartAdd.svg" alt=""></button></div>
     </div></article>
   </section>
 </main>
@@ -714,7 +786,7 @@ p{margin:0;}
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true">
   <div class="dh">
-    <div><h2 id="cartTitle">Cart</h2><span class="n"><b id="itemCount">15</b> <span id="itemLabel">items</span></span></div>
+    <div><h2 id="cartTitle">Cart</h2><span class="n"><b id="itemCount">0</b> <span id="itemLabel">items</span></span></div>
     <button class="x" id="closeBtn" aria-label="Close cart"><img src="assets/cart_imgCloseCancel.svg" alt=""></button>
   </div>
 
@@ -722,108 +794,113 @@ p{margin:0;}
     <div class="dc-top">
       <button class="fms" id="fmsBtn" aria-haspopup="dialog" aria-controls="timePanel">
         <span class="tr"><img src="assets/cart_imgDeliveryRoadBase.png" alt=""></span>
-        <span class="tx"><b id="fmsTitle">Delivery • Today 11am – 12pm</b><span>46 Smith St, Surry Hills, NSW, 2010</span></span>
+        <span class="tx"><b id="fmsTitle">Delivery • Today 9am – 2pm</b><span>46 Smith St, Surry Hills, NSW, 2010</span></span>
         <span class="chev"><img src="assets/cart_imgIcon.svg" alt=""></span>
       </button>
       <div class="edr"><img src="assets/cart_imgEverydayRewards.svg" alt=""><span class="a">Collect 123 pts</span><span class="dot">•</span><span class="a">$10 off next shop</span></div>
     </div>
 
-    <div class="cat">Fruit &amp; Veg</div>
-    <div class="tile-c">
-      <div class="ct" data-item>
-        <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
-        <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage.png" alt=""></div>
-          <div class="det"><span class="save">Save $1.00</span><p class="name">Avocado Shepard Each</p>
-            <div class="ctl"><div class="stepper" data-qty="1"><button data-minus aria-label="Decrease"><img src="assets/cart_imgIcon2.svg" alt=""></button><span class="q">1</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
-              <div class="pr"><b>$2.00</b><s>Was $3.00</s></div></div></div></div>
-      </div>
-    </div>
-    <div class="tile-c">
-      <div class="ct" data-item>
-        <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
-        <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage1.png" alt=""></div>
-          <div class="det"><span class="save">Save $1.00</span><p class="name">Cavendish Bananas Each</p>
-            <div class="ctl"><div class="stepper" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
-              <div class="pr"><b>$2.00</b><s>Was $3.00</s></div></div></div></div>
-      </div>
-    </div>
-
-    <div class="cat">Pantry</div>
+    <div class="cat" data-cat="Pantry">Pantry</div>
     <div class="tile-c">
       <div class="group">
-        <div class="ct" data-item>
+        <div class="ct" data-item data-unit="500">
           <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
           <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage2.png" alt=""></div>
-            <div class="det"><span class="save">Save $1.50</span><p class="name">Arnott's Tim Tam Original Chocolate Biscuits 200g</p>
-              <div class="ctl"><div class="stepper" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
-                <div class="pr"><b>$3.50</b></div></div></div></div>
+            <div class="det"><span class="save" hidden></span><p class="name">Arnott's Tim Tam Original Chocolate Biscuits 200g</p>
+              <div class="ctl"><div class="stepper" data-qty="1"><button data-minus aria-label="Decrease" disabled><img src="assets/cart_imgIcon2.svg" alt=""></button><span class="q">1</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
+                <div class="pr"><b></b><s hidden></s></div></div></div></div>
         </div>
-        <div class="ct" data-item>
+        <div class="bmsm-promo" data-min="2" data-price="350">
+          <div class="l"><img class="sp" src="assets/cart_imgSpecials.svg" alt=""><span class="pt">Buy 2 or more for $3.50 each</span><img class="ck" src="assets/cart_imgConfirmationCircleFilled.svg" alt=""></div>
+          <div class="r"><span class="pk">Pick any 2</span><span class="ul"><img src="assets/cart_imgTextUnderline.svg" alt=""></span><img class="fw" src="assets/cart_imgForward.svg" alt=""></div>
+        </div>
+      </div>
+    </div>
+    <div class="tile-c">
+      <div class="ct" data-item data-unit="890" data-was="1315">
           <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
-          <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage3.png" alt=""></div>
-            <div class="det"><span class="save">Save $1.50</span><p class="name">Arnott's Tim Tam Chewy Caramel Chocolate Biscuits 175g</p>
+          <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage4.png" alt=""></div>
+            <div class="det"><span class="save" hidden></span><p class="name">Nescafe Blend 43 Instant Coffee Tin 500g</p>
               <div class="ctl"><div class="stepper" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
-                <div class="pr"><b>$3.50</b></div></div></div></div>
+                <div class="pr"><b></b><s hidden></s></div></div></div></div>
         </div>
-        <div class="bmsm-promo">
-          <div class="l"><img class="sp" src="assets/cart_imgSpecials.svg" alt=""><span>Enjoy more savings</span><img class="ck" src="assets/cart_imgConfirmationCircleFilled.svg" alt=""></div>
-          <div class="r"><span>Pick any at $3.50 each</span><span class="ul"><img src="assets/cart_imgTextUnderline.svg" alt=""></span><img class="fw" src="assets/cart_imgForward.svg" alt=""></div>
-        </div>
-      </div>
-    </div>
-    <div class="tile-c">
-      <div class="ct" data-item>
-        <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
-        <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage4.png" alt=""></div>
-          <div class="det"><span class="save">Save $8.20</span><p class="name">Nescafe Blend 43 Instant Coffee Tin 500g</p>
-            <div class="ctl"><div class="stepper" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
-              <div class="pr"><b>$17.80</b><s>Was $26.30</s></div></div></div></div>
-      </div>
     </div>
 
-    <div class="cat">Drinks</div>
+    <div class="cat" data-cat="Drinks">Drinks</div>
     <div class="tile-c">
-      <div class="ct" data-item>
-        <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
-        <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage5.png" alt=""></div>
-          <div class="det"><span class="save">Save $3.86</span><p class="name">Nescafe Blend 43 Instant Coffee Tin 500g</p>
-            <div class="ctl"><div class="stepper" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
-              <div class="pr"><b>$3.84</b><s>Was $7.70</s></div></div></div></div>
-      </div>
+      <div class="ct" data-item data-unit="200" data-was="450">
+          <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
+          <div class="row"><div class="ai"><img src="assets/cart_imgCoke.png" alt=""></div>
+            <div class="det"><span class="save" hidden></span><p class="name">Coca-Cola Classic Soft Drink Bottle 1.25L</p>
+              <div class="ctl"><div class="stepper" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
+                <div class="pr"><b></b><s hidden></s></div></div></div></div>
+        </div>
     </div>
     <div class="tile-c">
-      <div class="ct" data-item>
-        <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
-        <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage6.png" alt=""></div>
-          <div class="det"><p class="name">Red Bull Energy Drink Cans 250ml x8 Pack</p>
-            <div class="ctl"><div class="stepper" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
-              <div class="pr"><b>$21.00</b></div></div></div></div>
-      </div>
-    </div>
-
-    <div class="cat" style="background:#f9f9f9">Dairy, Eggs &amp; Fridge</div>
-    <div class="plt" data-item>
-      <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
-      <div class="row"><div class="im"><img src="assets/cart_imgImage.png" alt=""></div>
-        <div class="d"><p class="nm">Woolworths 12 Large Free Range Eggs 600g</p>
-          <div class="ctrl"><div class="qs" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgMinus.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgPlus.svg" alt=""></button></div><div class="pp">$4.80</div></div></div></div>
-    </div>
-    <div class="plt" data-item>
-      <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
-      <div class="row"><div class="im"><img src="assets/cart_imgImage1.png" alt=""></div>
-        <div class="d"><span class="save2">SAVE $0.20</span><p class="nm">Woolworths Full Cream Milk 2l</p>
-          <div class="ctrl"><div class="qs" data-qty="2"><button data-minus aria-label="Decrease"><img src="assets/cart_imgMinus.svg" alt=""></button><span class="q">2</span><button data-plus aria-label="Increase"><img src="assets/cart_imgPlus.svg" alt=""></button></div><div class="pp">$2.80</div></div></div></div>
+      <div class="ct" data-item data-unit="1540" data-was="2200">
+          <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
+          <div class="row"><div class="ai"><img src="assets/cart_imgCoke2.png" alt=""></div>
+            <div class="det"><span class="save" hidden></span><p class="name">Coca-Cola Classic Soft Drink Bottle 1.25L</p>
+              <div class="ctl"><div class="stepper" data-qty="1"><button data-minus aria-label="Decrease" disabled><img src="assets/cart_imgIcon2.svg" alt=""></button><span class="q">1</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
+                <div class="pr"><b></b><s hidden></s></div></div></div></div>
+        </div>
     </div>
 
     <div class="btns"><button>Save as a list</button><button class="d" id="removeAll">Remove all</button></div>
-    <p class="empty" id="emptyMsg" hidden>Your cart is empty.</p>
+    <div class="empty-state" id="emptyMsg" hidden>
+      <div class="es-art">
+        <div class="es-ill" aria-hidden="true">
+          <img class="g8" src="assets/empty_group8.svg" alt="">
+          <span class="fl1"><img src="assets/empty_flower.svg" alt=""></span>
+          <span class="fl2"><img src="assets/empty_flower1.svg" alt=""></span>
+          <img class="milk" src="assets/empty_milk.svg" alt="">
+          <img class="apple" src="assets/empty_apple.svg" alt="">
+          <img class="bag" src="assets/empty_bag.svg" alt="">
+        </div>
+        <h3>Your cart is empty</h3>
+        <p>Select from these options to help build your cart</p>
+      </div>
+      <div class="es-grid">
+        <button type="button" class="es-tile es-wide">
+          <span class="es-stack" aria-hidden="true">
+            <span class="c c1"><span class="card"><img src="assets/empty_item1.png" alt=""></span></span>
+            <span class="c c2"><span class="card"><img src="assets/empty_item2.png" alt=""></span></span>
+            <span class="c c3"><span class="card"><img src="assets/empty_item3.png" alt=""></span></span>
+            <span class="c c4"><span class="card"><img src="assets/empty_item4.png" alt=""></span></span>
+          </span>
+          <span class="es-txt"><b>Bought before</b><small>Start your shop by adding your most frequently purchased products.</small></span>
+        </button>
+        <button type="button" class="es-tile">
+          <span class="es-ico" aria-hidden="true">
+            <img class="orbs" src="assets/empty_orbs.svg" alt="">
+            <img class="cbg" src="assets/empty_circlebg.svg" alt="">
+            <span class="bk">
+              <img class="basket" src="assets/empty_basket.svg" alt="">
+              <img class="glow" src="assets/empty_glow.svg" alt="">
+              <img class="plat" src="assets/empty_platter.svg" alt="">
+              <img class="ai" src="assets/empty_iconframe.svg" alt="">
+            </span>
+          </span>
+          <span class="es-beta">BETA</span>
+          <span class="es-txt"><b>Smart basket</b><small>Get a list of products built for you</small></span>
+        </button>
+        <button type="button" class="es-tile">
+          <span class="es-ico" aria-hidden="true">
+            <img class="orbs" src="assets/empty_orbs.svg" alt="">
+            <img class="cbg" src="assets/empty_circlebg.svg" alt="">
+            <img class="cam" src="assets/empty_camera.svg" alt="">
+          </span>
+          <span class="es-txt"><b>Snap &amp; shop</b><small>Upload an image or use a photo to create a list</small></span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="df">
     <button class="os">Order Summary <img src="assets/cart_imgChevronUp.svg" alt=""></button>
     <div class="tot">
-      <div class="l"><b>Subtotal</b><small>Excluding service fees</small></div>
-      <div class="rr"><b>$88.88</b><span class="sv">SAVING $8.88</span></div>
+      <div class="l"><b>Subtotal</b><small>Excl. service, bag &amp; delivery fees</small></div>
+      <div class="rr"><b data-cart-total>$0.00</b><span class="sv" id="saving" hidden></span></div>
     </div>
     <button class="co">Checkout</button>
   </div>
@@ -935,6 +1012,7 @@ p{margin:0;}
     countEl.textContent = count;
     labelEl.textContent = count === 1 ? 'item' : 'items';
     emptyMsg.hidden = count > 0;
+    drawer.classList.toggle('is-empty', count === 0);
   }
 
   openBtns.forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); open(); }); });
@@ -944,42 +1022,175 @@ p{margin:0;}
     if (e.key === 'Escape' && drawer.classList.contains('open')) close();
   });
 
-  // Quantity steppers and remove (display-only: prices stay as designed)
+  // ---- Pricing ----
+  // All money is integer cents. One render() recomputes every tile, the cart
+  // footer and the nav Cart button from the same numbers, so they can't drift.
+  // Unit prices may carry fractions of a cent (e.g. 286.5); each line is
+  // rounded once, and the subtotal is the sum of the rounded lines shown.
+  // Only these two products can be added from the Fruit page for now. The cart tile
+  // is built on demand, so the first add also creates the "Fruit & Veg" heading.
+  var CATS = ['Fruit & Veg', 'Pantry', 'Drinks'];
+  var CATALOG = {
+    banana:  { name: 'Cavendish Bananas Each', img: 'cart_imgArticleImage1.png', unit: 72.5,  was: 81,  cat: 'Fruit & Veg' },
+    avocado: { name: 'Avocado Shepard Each',   img: 'cart_imgArticleImage.png',  unit: 290, cat: 'Fruit & Veg' }
+  };
+  var totalEls = document.querySelectorAll('[data-cart-total]');
+  var savingEl = document.getElementById('saving');
+
+  function money(c) {
+    var s = (Math.abs(c) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return '$' + s;
+  }
+  function qtyOf(item) { return parseInt(item.querySelector('[data-qty]').dataset.qty, 10); }
+
+  function render() {
+    var total = 0, saving = 0, units = 0;
+
+    // Multi-buy promos: active when the group's combined quantity reaches the threshold
+    var promoFor = new Map();
+    drawer.querySelectorAll('.bmsm-promo').forEach(function (promo) {
+      var min = parseInt(promo.dataset.min, 10), price = parseFloat(promo.dataset.price);
+      var group = promo.closest('.group'), qty = 0;
+      group.querySelectorAll('[data-item]').forEach(function (it) { qty += qtyOf(it); });
+      var on = qty >= min;
+      promo.classList.toggle('on', on);
+      promo.querySelector('.pt').textContent = on ? 'Enjoy more savings' : 'Buy ' + min + ' or more for ' + money(price) + ' each';
+      promo.querySelector('.pk').textContent = on ? 'Pick any at ' + money(price) + ' each' : 'Pick any ' + min;
+      group.querySelectorAll('[data-item]').forEach(function (it) { promoFor.set(it, on ? price : null); });
+    });
+
+    drawer.querySelectorAll('[data-item]').forEach(function (item) {
+      var q = qtyOf(item);
+      var unit = parseFloat(item.dataset.unit);
+      var list = item.dataset.was ? parseFloat(item.dataset.was) : unit;
+      var promo = promoFor.get(item);
+      var line = Math.round((promo != null ? promo : unit) * q);
+      var listLine = Math.round(list * q);
+      var save = Math.max(0, listLine - line);
+
+      item.querySelector('.pr b').textContent = money(line);
+      var was = item.querySelector('.pr s'), tag = item.querySelector('.save');
+      was.hidden = tag.hidden = save === 0;
+      if (save) { was.textContent = 'Was ' + money(listLine); tag.textContent = 'Save ' + money(save); }
+
+      var minus = item.querySelector('[data-minus]');
+      minus.disabled = q <= 1;
+      minus.querySelector('img').src = q <= 1 ? 'assets/cart_imgIcon2.svg' : 'assets/cart_imgIcon4.svg';
+
+      total += line; saving += save; units += q;
+    });
+
+    // Hide a category heading once every tile under it has been removed
+    drawer.querySelectorAll('.cat').forEach(function (cat) {
+      var has = false, n = cat.nextElementSibling;
+      while (n && !n.classList.contains('cat')) { if (n.querySelector('[data-item]')) has = true; n = n.nextElementSibling; }
+      cat.hidden = !has;
+    });
+
+    // Keep each Fruit-page card in step with its cart tile: Add button at 0, stepper otherwise
+    document.querySelectorAll('.card[data-sku]').forEach(function (card) {
+      var it = drawer.querySelector('[data-item][data-sku="' + card.dataset.sku + '"]');
+      var q = it ? qtyOf(it) : 0;
+      card.querySelector('.actions').classList.toggle('added', q > 0);
+      card.querySelector('.gstep').hidden = q === 0;
+      card.querySelector('.gq').textContent = q;
+    });
+
+    count = units;
+    totalEls.forEach(function (el) { el.textContent = money(total); });
+    // Nav Cart buttons: outlined icon + no badge when empty, filled icon + count badge otherwise
+    document.querySelectorAll('[data-open-cart]').forEach(function (btn) {
+      var badge = btn.querySelector('[data-cart-badge]');
+      btn.querySelector('[data-cart-icon]').src = units > 0 ? 'assets/nav_cartFill.svg' : 'assets/nav_cartEmpty.svg';
+      badge.hidden = units === 0;
+      badge.textContent = units > 99 ? '99+' : units;
+      btn.setAttribute('aria-label', 'Cart, ' + units + (units === 1 ? ' item, ' : ' items, ') + money(total));
+    });
+    savingEl.hidden = saving === 0;
+    savingEl.textContent = 'SAVING ' + money(saving);
+    renderCount();
+  }
+
+  function removeTile(item) {
+    var group = item.closest('.group');
+    var wrap = item.closest('.tile-c');
+    item.remove();
+    if (group && !group.querySelector('[data-item]')) wrap.remove();   // last item gone: drop the promo too
+    else if (!group) wrap.remove();
+  }
+
   drawer.addEventListener('click', function (e) {
     var item = e.target.closest('[data-item]');
     if (!item) return;
-    var stepper = item.querySelector('[data-qty]');
-    if (e.target.closest('.rm')) {
-      count = Math.max(0, count - parseInt(stepper.dataset.qty, 10));
-      var wrap = item.parentElement.classList.contains('tile-c') ? item.parentElement : item;
-      wrap.remove();
-      renderCount();
-      return;
-    }
+    if (e.target.closest('.rm')) { removeTile(item); render(); return; }
     var plus = e.target.closest('[data-plus]');
     var minus = e.target.closest('[data-minus]');
     if (!plus && !minus) return;
-    var q = parseInt(stepper.dataset.qty, 10) + (plus ? 1 : -1);
+    var stepper = item.querySelector('[data-qty]');
+    var q = qtyOf(item) + (plus ? 1 : -1);
     if (q < 1) return;
     stepper.dataset.qty = q;
     stepper.querySelector('.q').textContent = q;
-    count += plus ? 1 : -1;
-    renderCount();
+    render();
   });
 
   document.getElementById('removeAll').addEventListener('click', function () {
-    drawer.querySelectorAll('[data-item]').forEach(function (i) {
-      var w = i.parentElement.classList.contains('tile-c') ? i.parentElement : i;
-      w.remove();
-    });
-    count = 0;
-    renderCount();
+    drawer.querySelectorAll('[data-item]').forEach(removeTile);
+    render();
   });
 
-  // "Add" buttons on the product grid bump the cart count
-  document.querySelectorAll('[data-add]').forEach(function (b) {
-    b.addEventListener('click', function () { count += 1; renderCount(); });
+  // ---- Adding from the Fruit page ----
+  function tileHTML(sku) {
+    var p = CATALOG[sku];
+    return '<div class="tile-c"><div class="ct" data-item data-sku="' + sku + '" data-unit="' + p.unit + '"' + (p.was ? ' data-was="' + p.was + '"' : '') + '>' +
+      '<button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>' +
+      '<div class="row"><div class="ai"><img src="assets/' + p.img + '" alt=""></div>' +
+      '<div class="det"><span class="save" hidden></span><p class="name">' + p.name + '</p>' +
+      '<div class="ctl"><div class="stepper" data-qty="1"><button data-minus aria-label="Decrease" disabled><img src="assets/cart_imgIcon2.svg" alt=""></button><span class="q">1</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>' +
+      '<div class="pr"><b></b><s hidden></s></div></div></div></div></div></div>';
+  }
+  function ensureCat(name) {
+    var cat = drawer.querySelector('.cat[data-cat="' + name + '"]');
+    if (cat) return cat;
+    cat = document.createElement('div');
+    cat.className = 'cat'; cat.dataset.cat = name; cat.textContent = name;
+    var idx = CATS.indexOf(name), before = null;
+    drawer.querySelectorAll('.cat').forEach(function (c) { if (!before && CATS.indexOf(c.dataset.cat) > idx) before = c; });
+    var ref = before || drawer.querySelector('.btns');
+    ref.parentNode.insertBefore(cat, ref);
+    return cat;
+  }
+  function curQty(sku) {
+    var it = drawer.querySelector('[data-item][data-sku="' + sku + '"]');
+    return it ? qtyOf(it) : 0;
+  }
+  function setQty(sku, q) {
+    var item = drawer.querySelector('[data-item][data-sku="' + sku + '"]');
+    if (q <= 0) { if (item) removeTile(item); render(); return; }
+    if (!item) {
+      var cat = ensureCat(CATALOG[sku].cat);
+      var end = cat.nextElementSibling;
+      while (end && !end.classList.contains('cat') && !end.classList.contains('btns')) end = end.nextElementSibling;
+      var tmp = document.createElement('div');
+      tmp.innerHTML = tileHTML(sku);
+      var tile = tmp.firstElementChild;
+      end.parentNode.insertBefore(tile, end);
+      item = tile.querySelector('[data-item]');
+    }
+    var stepper = item.querySelector('[data-qty]');
+    stepper.dataset.qty = q;
+    stepper.querySelector('.q').textContent = q;
+    render();
+  }
+  document.querySelector('.grid').addEventListener('click', function (e) {
+    var card = e.target.closest('.card[data-sku]');
+    if (!card) return;
+    var sku = card.dataset.sku;
+    if (e.target.closest('[data-sku-add]')) setQty(sku, 1);
+    else if (e.target.closest('[data-gplus]')) setQty(sku, curQty(sku) + 1);
+    else if (e.target.closest('[data-gminus]')) setQty(sku, curQty(sku) - 1);
   });
+  render();
 
 
   // ---- "Select a time" panel ----

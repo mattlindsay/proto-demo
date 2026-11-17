@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="77.7164" height="81.3437" viewBox="0 0 77.7164 81.3437" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Blurry Orbs - Slow and Continuious" filter="url(#filter0_f_0_743)">
+<ellipse id="4" cx="38.8582" cy="40.6719" rx="17.1875" ry="24.9219" fill="#00FFFF"/>
+<ellipse id="3" cx="38.8582" cy="40.6719" rx="21.4844" ry="20.625" transform="rotate(-9.23167 38.8582 40.6719)" fill="#CAEB6D"/>
+<ellipse id="2" cx="38.8582" cy="40.6719" rx="23.2031" ry="17.1875" transform="rotate(7.80126 38.8582 40.6719)" fill="white"/>
+<ellipse id="1" cx="39.2755" cy="41.1622" rx="19.3359" ry="17.1875" transform="rotate(-25.9584 39.2755 41.1622)" fill="#00FF36"/>
+</g>
+<defs>
+<filter id="filter0_f_0_743" x="-4.39178" y="-2.57812" width="86.5" height="86.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="7.875" result="effect1_foregroundBlur_0_743"/>
+</filter>
+</defs>
+</svg>
