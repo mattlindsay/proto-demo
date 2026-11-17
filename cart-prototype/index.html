@@ -506,29 +506,35 @@ p{margin:0;}
   .panel.open { transform: none; visibility: visible; transition: transform .34s cubic-bezier(.2,.8,.2,1), visibility 0s; }
   .drawer.panel-open .dh, .drawer.panel-open .dc, .drawer.panel-open .df { transform: translateX(-12%); opacity: .6; }
   .dh, .dc, .df { transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .34s ease; }
-  .ph { flex: none; display: flex; align-items: center; gap: 8px; padding: 16px; border-bottom: 1px solid var(--border-tile); background: #fff; }
+  /* Select a time header: same height and button style as the Cart header, no bottom border (Figma 5187:32645) */
+  .ph { flex: none; display: flex; align-items: center; gap: 8px; height: 76px; padding: 0 16px; background: #fff; }
   .ph h2 { flex: 1; text-align: center; font-family: var(--font-brand); font-weight: 500; font-size: 20px; line-height: 26px; color: var(--text-strong); }
-  .ph button { padding: 12px; border-radius: 22px; display: grid; place-items: center; }
+  .ph button { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 8px; }
   .ph button:hover { background: var(--bg-tertiary); }
   .ph button img.b { width: 16px; height: 16px; }
-  .ph button img.c { width: 20px; height: 20px; }
+  .ph button img.c { width: 24px; height: 24px; }
   .pc { flex: 1; overflow-y: auto; padding-bottom: 97px; display: flex; flex-direction: column; gap: 16px; }
   .pc > * { flex: none; }
-  .fmsel { padding: 16px 16px 0; background: #fff; }
-  .method { display: flex; background: var(--bg-secondary); border-radius: 24px; padding: 4px; }
-  .method button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 4px 16px; border-radius: 24px; font-size: 14px; line-height: 20px; border: 2px solid transparent; }
-  .method button.on { background: #008446; border-color: #008446; color: #fff; font-weight: 500; filter: drop-shadow(-1px 1px 3px rgba(23,28,31,.17)); }
-  .ill { position: relative; width: 32px; height: 32px; overflow: hidden; flex: none; }
-  .ill .road { position: absolute; left: -2.25px; top: 3.86px; width: 29.93px; height: 21.38px; object-fit: contain; }
-  .ill .partner { position: absolute; inset: 47.64% -0.06% 12.81% 37.43%; width: auto; height: auto; object-fit: contain; }
-  .ill .dtb { position: absolute; left: -4.23px; top: 1.68px; width: 40.57px; height: 29.11px; border-radius: 5px; }
-  .ill .dtb span { position: absolute; inset: 3.19% 2.29%; overflow: hidden; }
-  .ill .dtb img { position: absolute; height: 109.09%; width: 112.54%; left: -6.27%; top: -5.68%; max-width: none; }
-  .loc { display: flex; align-items: center; gap: 16px; padding: 12px 0 16px; }
-  .loc div { flex: 1; }
-  .loc small { display: block; font-size: 12px; line-height: 16px; margin-bottom: 4px; }
-  .loc b { font-weight: 500; font-size: 14px; line-height: 20px; }
-  .loc a { color: #00723d; text-decoration: underline; }
+  /* Fulfilment method tabs + address row (Figma 5246:60783) */
+  .fmsel { padding: 0 16px 8px; background: #fff; }
+  .method { display: flex; align-items: center; justify-content: center; background: #f9f9f9; border-radius: 24px; padding: 4px; overflow: hidden; }
+  .method button { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 4px 16px; border-radius: 24px; border: 2px solid transparent; text-align: left; color: var(--text-strong); }
+  .method .mt { display: flex; flex-direction: column; }
+  .method .mt b { font-weight: 400; font-size: 14px; line-height: 20px; white-space: nowrap; }
+  .method .mt small { font-size: 12px; line-height: 16px; white-space: nowrap; }
+  .method button.on { background: #008446; border-color: #008446; color: #fff; filter: drop-shadow(-1px 1px 3px rgba(23,28,31,.17)); }
+  .method button.on .mt b { font-weight: 500; }
+  .mi-dtb { position: relative; width: 39.773px; height: 28px; overflow: hidden; flex: none; }
+  .mi-dtb img { position: absolute; width: 112.54%; height: 109.09%; left: -6.27%; top: -5.68%; max-width: none; }
+  .mi-del { position: relative; width: 40.49px; height: 28.05px; flex: none; }
+  .mi-del img { position: absolute; max-width: none; object-fit: contain; }
+  .mi-del .rd { left: 0; top: 0; width: 34.613px; height: 26.822px; }
+  .mi-del .pt { left: 17.31px; top: 13.41px; width: 23.176px; height: 14.638px; }
+  .loc { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 48px; margin: 12px 0 0; padding: 8px 0; border-radius: 8px; background: #fff; text-align: left; cursor: pointer; }
+  .loc .lt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .loc small { font-size: 12px; line-height: 16px; color: var(--text-medium); }
+  .loc b { font-weight: 400; font-size: 16px; line-height: 24px; color: var(--text-strong); }
+  .loc .le { flex: none; font-size: 16px; line-height: 24px; color: #008446; text-decoration: underline; text-underline-position: from-font; }
   .sugg { background: #f4ffdb; padding-bottom: 16px; }
   .sugg .h { display: flex; align-items: center; justify-content: space-between; padding: 16px; font-size: 16px; line-height: 24px; font-weight: 500; }
   .sugg .h img { width: 20px; height: 20px; }
@@ -953,10 +959,10 @@ p{margin:0;}
       <div>
         <div class="fmsel">
           <div class="method">
-            <button type="button"><span class="ill"><span class="dtb"><span><img src="assets/fms_iconDtbIsolated.png" alt=""></span></span></span>Collection</button>
-            <button type="button" class="on"><span class="ill"><img class="road" src="assets/fms_deliveryRoadBase.png" alt=""><img class="partner" src="assets/fms_image25.png" alt=""></span>Delivery</button>
+            <button type="button"><span class="mi-dtb" aria-hidden="true"><img src="assets/fms_iconDtbIsolated.png" alt=""></span><span class="mt"><b>Collection</b><small>$0 – $5</small></span></button>
+            <button type="button" class="on"><span class="mi-del" aria-hidden="true"><img class="rd" src="assets/fms_deliveryRoadBase.png" alt=""><img class="pt" src="assets/fms_image25.png" alt=""></span><span class="mt"><b>Delivery</b><small>$0 – $15</small></span></button>
           </div>
-          <div class="loc"><div><small>Delivery to</small><b>402b Liverpool Road</b></div><a href="#" onclick="return false">Edit</a></div>
+          <button type="button" class="loc"><span class="lt"><small>Deliver to</small><b>46 Smith St, Surry Hills, NSW, 2010</b></span><span class="le">Edit</span></button>
         </div>
         <div class="sugg">
           <div class="h"><span>Suggested for you</span><img src="assets/fms_info.svg" alt=""></div>
