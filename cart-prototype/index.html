@@ -332,14 +332,14 @@ p{margin:0;}
   .drawer { position: fixed; top: 16px; right: 16px; bottom: 16px; width: 516px; max-width: calc(100vw - 32px); background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.25); overflow: hidden; z-index: 210;
     transform: translateX(calc(100% + 32px)); visibility: hidden; transition: transform .32s cubic-bezier(.2,.8,.2,1), visibility 0s linear .32s; }
   .drawer.open { transform: none; visibility: visible; transition: transform .32s cubic-bezier(.2,.8,.2,1), visibility 0s; }
-  .dh { position: absolute; top: 0; left: 0; right: 0; height: 76px; background: #fff; border-bottom: 1px solid var(--border-tile); display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 20px; z-index: 3; }
+  .dh { position: absolute; top: 0; left: 0; right: 0; height: 76px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 20px; z-index: 3; }
   .dh h2 { display: inline; font-family: var(--font-brand); font-weight: 500; font-size: 24px; line-height: 32px; color: var(--text-nav); }
   .dh .n { margin-left: 8px; font-size: 16px; line-height: 24px; color: var(--text-nav); }
   .dh .n b { font-weight: 700; }
   .dh .x { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 8px; }
   .dh .x:hover { background: var(--bg-tertiary); }
   .dh .x img { width: 24px; height: 24px; }
-  .dc { position: absolute; top: 76px; bottom: 164px; left: 0; right: 0; overflow-y: auto; padding: 20px 0 0; }
+  .dc { position: absolute; top: 76px; bottom: var(--df-h, 167px); left: 0; right: 0; overflow-y: auto; padding: 0; }
   .dc-top { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 16px; }
   .fms { background: var(--bg-secondary); border-radius: 8px; padding: 8px 12px 8px 12px; display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; }
   .fms .tr { width: 46px; height: 46px; position: relative; flex: none; }
@@ -414,6 +414,34 @@ p{margin:0;}
   .btns button { flex: 1; min-width: 0; height: 48px; padding: 12px 16px; border-radius: 8px; background: #f5f6f6; color: #3a474e; font-weight: 500; font-size: 16px; line-height: 24px; white-space: nowrap; }
   .btns button.d { color: #ca0000; }
   .df { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; filter: drop-shadow(0 -4px 6px rgba(0,0,0,.06)); z-index: 3; }
+  /* Spend tracker (Figma 5241:60537 / 5241:60106): sits at the top of the cart content.
+     Height animates 0 -> auto (grid 0fr -> 1fr) so the content below is pushed down. */
+  .spend { position: sticky; top: 0; z-index: 2; background: #fff; padding: 0 16px; display: grid; grid-template-rows: 0fr; margin-bottom: 0; opacity: 0;
+           transition: grid-template-rows .6s cubic-bezier(.2,.8,.2,1), margin-bottom .6s cubic-bezier(.2,.8,.2,1), opacity .4s ease, box-shadow .2s ease; }
+  .spend.on { grid-template-rows: 1fr; margin-bottom: 16px; opacity: 1; }
+  .spend.stuck { box-shadow: 0 6px 8px -6px rgba(0,0,0,.2); }   /* lifts off the content scrolling beneath it */
+  .drawer.is-empty .spend { display: none; }
+  .sp-in { min-height: 0; overflow: hidden; }
+  .sp-pad { padding: 4px 0 8px; }
+  .sp-row { display: flex; align-items: center; gap: 8px; }
+  .sp-bar { position: relative; flex: 1; height: 9px; border-radius: 100px; background: #e9e9e9; }
+  .sp-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 200px; background: linear-gradient(to right, #a5c84d 53.8%, #158841 82.7%); transition: width .9s cubic-bezier(.2,.8,.2,1); }
+  .sp-shine { position: absolute; left: 1.4px; right: 1.9px; top: .57px; bottom: 2.63px; border-radius: 200px; background: rgba(255,255,255,.2); }
+  .sp-goal { height: 9px; display: flex; align-items: center; font-size: 16px; line-height: 24px; font-weight: 500; color: var(--text-medium); white-space: nowrap; } /* label overhangs the 9px bar, as in Figma */
+  .sp-txt { margin: 2px 0 0; padding-top: 4px; display: flex; flex-wrap: wrap; gap: 2px; justify-content: flex-start; align-items: center; font-size: 14px; line-height: 20px; color: var(--text-strong); }
+  .sp-m { display: inline-flex; align-items: flex-start; }
+  .sp-d { width: 9px; height: 16px; }
+  /* Rolling figures: each digit is a window onto a column of 0-9 that slides */
+  .sp-roll { display: inline-flex; height: 20px; font-variant-numeric: tabular-nums; }
+  .rl { display: inline-block; height: 20px; width: 8px; overflow: hidden; transition: width .45s cubic-bezier(.2,.8,.2,1); }
+  .rl.blank { width: 0; }
+  .rl-c { display: flex; flex-direction: column; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+  .rl-c span { display: block; height: 20px; line-height: 20px; text-align: center; }
+  .rl-dot { display: inline-block; height: 20px; line-height: 20px; }
+  .sp-roll.no-anim, .sp-roll.no-anim * { transition: none !important; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .df .co:disabled { background: #d2d2d2; color: #fff; cursor: not-allowed; }
+  @media (prefers-reduced-motion: reduce) { .spend, .sp-fill, .rl, .rl-c { transition: none; } }
   .df .os { width: 100%; padding: 8px 16px; display: flex; align-items: center; justify-content: center; gap: 4px; color: #178841; font-weight: 400; font-size: 14px; line-height: 20px; border-bottom: 1px solid var(--border-weak); }
   .df .os img { width: 20px; height: 20px; }
   .df .tot { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 16px 8px; }
@@ -423,7 +451,7 @@ p{margin:0;}
   .df .tot .rr b { font-family: var(--font-brand); font-weight: 500; font-size: 20px; line-height: 26px; }
   .df .tot .sv { background: var(--yellow); border-radius: 2px; padding: 3px 8px; font-size: 10px; line-height: 10px; font-weight: 700; text-transform: uppercase; }
   .df .co { margin: 0 16px 16px; width: calc(100% - 32px); height: 48px; border-radius: 8px; background: var(--green); color: #fff; font-weight: 500; font-size: 16px; }
-  .df .co:hover { background: #0d5127; }
+  .df .co:hover:not(:disabled) { background: #0d5127; }
   /* Empty cart (Figma 5221:42424): header only, no delivery/rewards rows, no footer */
   .drawer.is-empty .dc { bottom: 0; padding-top: 0; }
   .drawer.is-empty .dc-top, .drawer.is-empty .btns, .drawer.is-empty .df, .drawer.is-empty .dh .n { display: none; }
@@ -791,6 +819,15 @@ p{margin:0;}
   </div>
 
   <div class="dc">
+    <div class="spend" id="spend" inert aria-hidden="true">
+      <div class="sp-in"><div class="sp-pad">
+        <div class="sp-row">
+          <div class="sp-bar" id="spBar" role="progressbar" aria-label="Minimum spend" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0"><span class="sp-fill" id="spFill"><span class="sp-shine"></span></span></div>
+          <span class="sp-goal">$50</span>
+        </div>
+        <p class="sp-txt"><span class="sp-m"><img class="sp-d" src="assets/spend_dollar.svg" alt="$">50</span><span>minimum spend. Add</span><span class="sp-m"><img class="sp-d" src="assets/spend_dollar.svg" alt="$"><span class="sp-roll" id="spLeft" aria-hidden="true"></span><span class="sr-only" id="spLeftTxt">50.00</span></span><span>more to place this order</span></p>
+      </div></div>
+    </div>
     <div class="dc-top">
       <button class="fms" id="fmsBtn" aria-haspopup="dialog" aria-controls="timePanel">
         <span class="tr"><img src="assets/cart_imgDeliveryRoadBase.png" alt=""></span>
@@ -998,6 +1035,7 @@ p{margin:0;}
     lastFocus = document.activeElement;
     drawer.classList.add('open');
     scrim.classList.add('open');
+    if (typeof playSpendIntro === 'function') playSpendIntro();
     drawer.setAttribute('aria-hidden', 'false');
     setTimeout(function () { closeBtn.focus(); }, 50);
   }
@@ -1029,6 +1067,7 @@ p{margin:0;}
   // rounded once, and the subtotal is the sum of the rounded lines shown.
   // Only these two products can be added from the Fruit page for now. The cart tile
   // is built on demand, so the first add also creates the "Fruit & Veg" heading.
+  var MIN_SPEND = 5000;   // cents: $50 minimum spend to place an order
   var CATS = ['Fruit & Veg', 'Pantry', 'Drinks'];
   var CATALOG = {
     banana:  { name: 'Cavendish Bananas Each', img: 'cart_imgArticleImage1.png', unit: 72.5,  was: 81,  cat: 'Fruit & Veg' },
@@ -1041,6 +1080,84 @@ p{margin:0;}
     var s = (Math.abs(c) / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return '$' + s;
   }
+  // ---- Spend tracker: rolling figure + animated bar ----
+  var cartTotal = 0, cartUnits = 0, spendIntro = false;
+  var spendEl = document.getElementById('spend');
+  var spFill = document.getElementById('spFill');
+  var roll = (function () {
+    var host = document.getElementById('spLeft');
+    function slot(labels) {
+      var w = document.createElement('span'); w.className = 'rl';
+      var c = document.createElement('span'); c.className = 'rl-c';
+      labels.forEach(function (l) { var d = document.createElement('span'); d.textContent = l; c.appendChild(d); });
+      w.appendChild(c); host.appendChild(w);
+      return { w: w, c: c };
+    }
+    var digits = ['0','1','2','3','4','5','6','7','8','9'];
+    var tens = slot(digits.concat(['']));            // index 10 = blank, so $7.80 has no leading digit
+    var ones = slot(digits);
+    var dot = document.createElement('span'); dot.className = 'rl-dot'; dot.textContent = '.'; host.appendChild(dot);
+    var t1 = slot(digits), t2 = slot(digits);
+    var slots = [tens, ones, t1, t2];
+    function place(sl, idx, i) {
+      sl.c.style.transitionDelay = (i * 35) + 'ms';   // right-to-left feel: tens first, cents last
+      sl.c.style.transform = 'translateY(' + (-idx * 20) + 'px)';
+    }
+    return {
+      set: function (cents, animate) {
+        var v = Math.max(0, Math.round(cents)), d = Math.floor(v / 100), c = v % 100;
+        if (!animate) host.classList.add('no-anim');
+        var tIdx = d >= 10 ? Math.floor(d / 10) % 10 : 10;
+        place(tens, tIdx, 0); tens.w.classList.toggle('blank', tIdx === 10);
+        place(ones, d % 10, 1); place(t1, Math.floor(c / 10), 2); place(t2, c % 10, 3);
+        if (!animate) { void host.offsetWidth; host.classList.remove('no-anim'); }
+        document.getElementById('spLeftTxt').textContent = (v / 100).toFixed(2);
+      }
+    };
+  })();
+  roll.set(MIN_SPEND, false);
+  var dcEl = drawer.querySelector('.dc');
+  dcEl.addEventListener('scroll', function () { spendEl.classList.toggle('stuck', dcEl.scrollTop > 0); }, { passive: true });
+
+  var spendTimer = null;
+  function collapseSpend() {
+    spendEl.classList.remove('on');
+    spendEl.setAttribute('inert', '');
+    spendEl.setAttribute('aria-hidden', 'true');
+  }
+  function applySpend(show, reached) {
+    clearTimeout(spendTimer);
+    if (!show) {
+      if (reached && spendEl.classList.contains('on')) {
+        // Minimum reached: finish the bar and the figure first, then slide away
+        spFill.style.width = '100%';
+        document.getElementById('spBar').setAttribute('aria-valuenow', '50.00');
+        roll.set(0, true);
+        spendTimer = setTimeout(collapseSpend, 900);
+      } else collapseSpend();
+      return;
+    }
+    spendEl.classList.add('on');
+    spendEl.removeAttribute('inert');
+    spendEl.setAttribute('aria-hidden', 'false');
+    var short = MIN_SPEND - cartTotal;
+    spFill.style.width = Math.max(0, Math.min(100, cartTotal / MIN_SPEND * 100)) + '%';
+    document.getElementById('spBar').setAttribute('aria-valuenow', (cartTotal / 100).toFixed(2));
+    roll.set(short, true);
+  }
+  // On opening the cart: collapsed, empty bar and $50.00, then the bar grows, the content
+  // is pushed down and the figure rolls down to what is actually left.
+  function playSpendIntro() {
+    if (!(cartUnits > 0 && cartTotal < MIN_SPEND)) return;
+    spendIntro = true;
+    spendEl.style.transition = 'none'; spFill.style.transition = 'none';
+    spendEl.classList.remove('on'); spFill.style.width = '0%';
+    roll.set(MIN_SPEND, false);
+    void spendEl.offsetWidth;
+    spendEl.style.transition = ''; spFill.style.transition = '';
+    setTimeout(function () { spendIntro = false; applySpend(cartUnits > 0 && cartTotal < MIN_SPEND); }, 380);
+  }
+
   function qtyOf(item) { return parseInt(item.querySelector('[data-qty]').dataset.qty, 10); }
 
   function render() {
@@ -1106,6 +1223,12 @@ p{margin:0;}
       badge.textContent = units > 99 ? '99+' : units;
       btn.setAttribute('aria-label', 'Cart, ' + units + (units === 1 ? ' item, ' : ' items, ') + money(total));
     });
+    // Spend tracker: progress toward the minimum spend, gone once it is reached
+    cartTotal = total; cartUnits = units;
+    var short = MIN_SPEND - total;
+    var showSpend = units > 0 && short > 0;
+    document.querySelector('.df .co').disabled = short > 0;   // under the minimum: Checkout is greyed out
+    if (!spendIntro) applySpend(showSpend, units > 0 && short <= 0);
     savingEl.hidden = saving === 0;
     savingEl.textContent = 'SAVING ' + money(saving);
     renderCount();
@@ -1191,6 +1314,12 @@ p{margin:0;}
     else if (e.target.closest('[data-gminus]')) setQty(sku, curQty(sku) - 1);
   });
   render();
+
+  // Keep the scrolling list clear of the footer, whatever height it currently is
+  var dfEl = drawer.querySelector('.df');
+  function syncFooterH() { drawer.style.setProperty('--df-h', dfEl.offsetHeight + 'px'); }
+  if (window.ResizeObserver) new ResizeObserver(syncFooterH).observe(dfEl);
+  syncFooterH();
 
 
   // ---- "Select a time" panel ----
