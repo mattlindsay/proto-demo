@@ -576,6 +576,59 @@ p{margin:0;}
   .pf { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--border-weak); padding: 16px; }
   .pf button { width: 100%; height: 48px; border-radius: 8px; background: #178841; color: #fff; font-size: 16px; line-height: 24px; font-weight: 500; }
   .pf button:hover { background: #0d5127; }
+  /* ---------- Offer panel: Buy 2 or more, quick add ---------- */
+  .bpanel .bt { position: relative; flex: none; height: 224px; background: #fff; }
+  .bt-bar { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; justify-content: space-between; padding: 8px; }
+  .bt-bar button { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 8px; }
+  .bt-bar button:hover { background: var(--bg-tertiary); }
+  .bt-bar img.b { width: 16px; height: 16px; }
+  .bt-bar img.c { width: 24px; height: 24px; }
+  .ry { position: absolute; left: 50%; top: 13px; width: 112px; height: 112px; transform: translateX(-50%); z-index: 2; }
+  .ry .rb { position: absolute; left: 0; right: 0; top: 0; bottom: .49px; width: 100%; height: calc(100% - .49px); }
+  .ry .rt { position: absolute; left: 17%; right: 17.93%; top: 37%; bottom: 37.72%; }   /* the text svg is stretched to fit this box, as in Figma */
+  .ry .rt img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
+  .bt-offer { position: absolute; left: 0; right: 0; bottom: 0; height: 96px; }
+  .bt-offer h2 { position: absolute; left: 49px; right: 49px; top: 12px; text-align: center; font-family: var(--font-brand); font-weight: 500; font-size: 20px; line-height: 24px; color: #171c1f; white-space: nowrap; }
+  .bt-gauge { position: absolute; left: 49px; right: 49px; top: 36px; height: 20px; box-sizing: border-box; padding: 8px 16px; display: flex; gap: 2px; }
+  .bt-gauge span { flex: 1; background: #d2d2d2; transition: background .45s ease; }
+  .bt-gauge span:first-child { border-radius: 2px 0 0 2px; }
+  .bt-gauge span:last-child { border-radius: 0 2px 2px 0; }
+  .bt-gauge span.on { background: #178841; }
+  .bt-offer p { position: absolute; left: 36px; right: 36px; top: 56px; margin: 0; text-align: center; font-size: 16px; line-height: 24px; color: #616c71; white-space: nowrap; }
+  .bpanel .bl { flex: 1; overflow-y: auto; padding: 0 0 88px; }
+  .bpanel .bl .tile-c { padding: 0 16px 12px; }
+  .bm-act { display: flex; }
+  .bm-add { width: 176px; height: 36px; border-radius: 8px; background: #008446; color: #fff; font-size: 14px; line-height: 20px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 8px 16px; }
+  .bm-add:hover { background: #0d5127; }
+  .bm-add img { width: 20px; height: 20px; }
+  .bm-add[hidden], .bm-step[hidden] { display: none; }
+  .bpanel .bl .ct .pr { width: 104px; }
+  .bf { position: absolute; left: 0; right: 0; bottom: 0; height: 82px; box-sizing: border-box; padding: 17px 16px; background: #fff; border-top: 1px solid var(--border-weak); box-shadow: 0 -4px 8px rgba(0,0,0,.04);
+        transform: translateY(100%); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+  .bf.show { transform: none; }
+  .bf button { width: 100%; height: 48px; border-radius: 8px; background: #178841; color: #fff; font-size: 16px; line-height: 24px; font-weight: 500; }
+  .bf button:hover { background: #0d5127; }
+  .bmsm-promo { cursor: pointer; }
+  /* confetti: scattered when the offer is unlocked, bursts out from the roundel when it unlocks */
+  .confetti { position: absolute; left: calc(50% - 6px); top: -12px; width: 280px; height: 146px; transform: translateX(-50%); pointer-events: none; z-index: 1; }
+  .bpanel .bt { overflow: hidden; }   /* the burst can fly wide but never spills onto the list below */
+  .confetti i { position: absolute; display: block; opacity: 0; transform: scale(.2); }
+  .confetti i.rd { border-radius: 50%; }
+  .confetti.show i { opacity: var(--o); transform: rotate(var(--r)); }
+  /* Each piece starts at the roundel, is flung just past its resting spot, then glides in and settles.
+     No spring-back: burst, then resolve. */
+  .confetti.burst i { animation: cf-pop 1.2s linear var(--d) both; }
+  @keyframes cf-pop {
+    0%   { opacity: 0; transform: translate(var(--sx), var(--sy)) rotate(0deg) scale(.15); animation-timing-function: cubic-bezier(.1,.8,.2,1); }
+    12%  { opacity: var(--o); }
+    32%  { transform: translate(calc(var(--sx) * -.16), calc(var(--sy) * -.16)) rotate(calc(var(--r) * 1.35)) scale(1.18); animation-timing-function: cubic-bezier(.3,.5,.3,1); }
+    100% { opacity: var(--o); transform: translate(0, 0) rotate(var(--r)) scale(1); }
+  }
+  /* the roundel takes the bang: one quick swell, then back */
+  .ry.punch { animation: ry-punch .45s cubic-bezier(.2,.8,.3,1); }
+  @keyframes ry-punch { 0% { transform: translateX(-50%) scale(1); } 28% { transform: translateX(-50%) scale(1.1); } 100% { transform: translateX(-50%) scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .confetti.burst i, .ry.punch { animation: none; } .bf, .bt-gauge span { transition: none; } }
+
   @media (prefers-reduced-motion: reduce) { .panel, .dh, .dc, .df { transition: none; } }
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { .drawer, .scrim { transition: none; } }
@@ -850,14 +903,14 @@ p{margin:0;}
     <div class="cat" data-cat="Pantry">Pantry</div>
     <div class="tile-c">
       <div class="group">
-        <div class="ct" data-item data-unit="500">
+        <div class="ct" data-item data-sku="tt-orig" data-unit="500">
           <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
           <div class="row"><div class="ai"><img src="assets/cart_imgArticleImage2.png" alt=""></div>
             <div class="det"><span class="save" hidden></span><p class="name">Arnott's Tim Tam Original Chocolate Biscuits 200g</p>
               <div class="ctl"><div class="stepper" data-qty="1"><button data-minus aria-label="Decrease" disabled><img src="assets/cart_imgIcon2.svg" alt=""></button><span class="q">1</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
                 <div class="pr"><b></b><s hidden></s></div></div></div></div>
         </div>
-        <div class="bmsm-promo" data-min="2" data-price="350">
+        <div class="bmsm-promo" data-min="2" data-price="350" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="bmsmPanel">
           <div class="l"><img class="sp" src="assets/cart_imgSpecials.svg" alt=""><span class="pt">Buy 2 or more for $3.50 each</span><img class="ck" src="assets/cart_imgConfirmationCircleFilled.svg" alt=""></div>
           <div class="r"><span class="pk">Pick any 2</span><span class="ul"><img src="assets/cart_imgTextUnderline.svg" alt=""></span><img class="fw" src="assets/cart_imgForward.svg" alt=""></div>
         </div>
@@ -994,6 +1047,25 @@ p{margin:0;}
     </div>
     <div class="pf"><button id="reserveBtn" type="button">Reserve time</button></div>
   </section>
+
+  <!-- "Buy 2 or more" offer panel: quick add (Figma 5221:39276) -->
+  <section class="panel bpanel" id="bmsmPanel" role="dialog" aria-labelledby="bmTitle" aria-hidden="true">
+    <div class="bt">
+      <div class="confetti" id="bmConfetti" aria-hidden="true"></div>
+      <div class="bt-bar">
+        <button type="button" id="bmBack" aria-label="Back to cart"><img class="b" src="assets/fms_chevronLeft.svg" alt=""></button>
+        <button type="button" id="bmClose" aria-label="Close"><img class="c" src="assets/fms_closeCancel.svg" alt=""></button>
+      </div>
+      <div class="ry" aria-hidden="true"><img class="rb" src="assets/bmsm_roundelBase.svg" alt=""><span class="rt"><img src="assets/bmsm_roundelText.svg" alt=""></span></div>
+      <div class="bt-offer">
+        <h2 id="bmTitle">Buy 2 or more for $3.50 each</h2>
+        <div class="bt-gauge" id="bmGauge" aria-hidden="true"><span></span><span></span></div>
+        <p id="bmSub" aria-live="polite">Add 1 more item to enjoy savings</p>
+      </div>
+    </div>
+    <div class="bl" id="bmList"></div>
+    <div class="bf" id="bmFoot"><button type="button" id="bmUpdate">Update cart</button></div>
+  </section>
 </aside>
 
 
@@ -1043,6 +1115,8 @@ p{margin:0;}
 
   function open() {
     lastFocus = document.activeElement;
+    // always land at the top, wherever it was scrolled to last time
+    drawer.querySelectorAll('.dc, .pc, .bl').forEach(function (el) { el.scrollTop = 0; });
     drawer.classList.add('open');
     scrim.classList.add('open');
     if (typeof playSpendIntro === 'function') playSpendIntro();
@@ -1054,6 +1128,7 @@ p{margin:0;}
     scrim.classList.remove('open');
     drawer.setAttribute('aria-hidden', 'true');
     if (typeof closePanel === 'function') closePanel(false);
+    if (typeof closeBm === 'function') closeBm(false);
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
   function renderCount() {
@@ -1081,8 +1156,14 @@ p{margin:0;}
   var CATS = ['Fruit & Veg', 'Pantry', 'Drinks'];
   var CATALOG = {
     banana:  { name: 'Cavendish Bananas Each', img: 'cart_imgArticleImage1.png', unit: 72.5,  was: 81,  cat: 'Fruit & Veg' },
-    avocado: { name: 'Avocado Shepard Each',   img: 'cart_imgArticleImage.png',  unit: 290, cat: 'Fruit & Veg' }
+    avocado: { name: 'Avocado Shepard Each',   img: 'cart_imgArticleImage.png',  unit: 290, cat: 'Fruit & Veg' },
+    // Tim Tam range: all part of the multi-buy offer, so they live in the cart's offer group
+    'tt-orig':   { name: "Arnott's Tim Tam Original Chocolate Biscuits 200g",      img: 'cart_imgArticleImage2.png',  unit: 500, cat: 'Pantry', group: true },
+    'tt-double': { name: "Arnott's Tim Tam Double Chocolate Biscuits 200g",        img: 'bmsm_timtam_double.jpg',     unit: 500, cat: 'Pantry', group: true },
+    'tt-dark':   { name: "Arnott's Tim Tam Dark Chocolate Biscuits 200g",          img: 'bmsm_timtam_dark.jpg',       unit: 500, cat: 'Pantry', group: true },
+    'tt-chewy':  { name: "Arnott's Tim Tam Chewy Caramel Chocolate Biscuits 200g", img: 'bmsm_timtam_chewy.jpg',      unit: 500, cat: 'Pantry', group: true }
   };
+  var BM = { min: 2, price: 350, list: 500, skus: ['tt-orig', 'tt-double', 'tt-dark', 'tt-chewy'] };
   var totalEls = document.querySelectorAll('[data-cart-total]');
   var savingEl = document.getElementById('saving');
 
@@ -1290,6 +1371,7 @@ p{margin:0;}
     savingEl.hidden = saving === 0;
     savingEl.textContent = 'SAVING ' + money(saving);
     renderCount();
+    syncBmsm();
   }
 
   function removeTile(item) {
@@ -1321,15 +1403,17 @@ p{margin:0;}
   });
 
   // ---- Adding from the Fruit page ----
-  function tileHTML(sku) {
+  function ctHTML(sku) {
     var p = CATALOG[sku];
-    return '<div class="tile-c"><div class="ct" data-item data-sku="' + sku + '" data-unit="' + p.unit + '"' + (p.was ? ' data-was="' + p.was + '"' : '') + '>' +
+    return '<div class="ct" data-item data-sku="' + sku + '" data-unit="' + p.unit + '"' + (p.was ? ' data-was="' + p.was + '"' : '') + '>' +
       '<button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>' +
       '<div class="row"><div class="ai"><img src="assets/' + p.img + '" alt=""></div>' +
       '<div class="det"><span class="save" hidden></span><p class="name">' + p.name + '</p>' +
       '<div class="ctl"><div class="stepper" data-qty="1"><button data-minus aria-label="Decrease" disabled><img src="assets/cart_imgIcon2.svg" alt=""></button><span class="q">1</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>' +
-      '<div class="pr"><b></b><s hidden></s></div></div></div></div></div></div>';
+      '<div class="pr"><b></b><s hidden></s></div></div></div></div></div>';
   }
+  function tileHTML(sku) { return '<div class="tile-c">' + ctHTML(sku) + '</div>'; }
+  var promoTpl = drawer.querySelector('.bmsm-promo').outerHTML;   // kept so the offer group can be rebuilt after it was emptied
   function ensureCat(name) {
     var cat = drawer.querySelector('.cat[data-cat="' + name + '"]');
     if (cat) return cat;
@@ -1341,6 +1425,17 @@ p{margin:0;}
     ref.parentNode.insertBefore(cat, ref);
     return cat;
   }
+  // The multi-buy offer group (tiles + offer row). Rebuilt on demand if every tile had been removed.
+  function ensureGroup() {
+    var g = drawer.querySelector('.group');
+    if (g) return g;
+    var cat = ensureCat('Pantry');
+    var wrap = document.createElement('div');
+    wrap.className = 'tile-c';
+    wrap.innerHTML = '<div class="group">' + promoTpl + '</div>';
+    cat.parentNode.insertBefore(wrap, cat.nextElementSibling);
+    return wrap.firstChild;
+  }
   function curQty(sku) {
     var it = drawer.querySelector('[data-item][data-sku="' + sku + '"]');
     return it ? qtyOf(it) : 0;
@@ -1349,20 +1444,123 @@ p{margin:0;}
     var item = drawer.querySelector('[data-item][data-sku="' + sku + '"]');
     if (q <= 0) { if (item) removeTile(item); render(); return; }
     if (!item) {
-      var cat = ensureCat(CATALOG[sku].cat);
-      var end = cat.nextElementSibling;
-      while (end && !end.classList.contains('cat') && !end.classList.contains('btns')) end = end.nextElementSibling;
       var tmp = document.createElement('div');
-      tmp.innerHTML = tileHTML(sku);
-      var tile = tmp.firstElementChild;
-      end.parentNode.insertBefore(tile, end);
-      item = tile.querySelector('[data-item]');
+      if (CATALOG[sku].group) {
+        var grp = ensureGroup();
+        tmp.innerHTML = ctHTML(sku);
+        item = tmp.firstElementChild;
+        grp.insertBefore(item, grp.querySelector('.bmsm-promo'));
+      } else {
+        var cat = ensureCat(CATALOG[sku].cat);
+        var end = cat.nextElementSibling;
+        while (end && !end.classList.contains('cat') && !end.classList.contains('btns')) end = end.nextElementSibling;
+        tmp.innerHTML = tileHTML(sku);
+        var tile = tmp.firstElementChild;
+        end.parentNode.insertBefore(tile, end);
+        item = tile.querySelector('[data-item]');
+      }
     }
     var stepper = item.querySelector('[data-qty]');
     stepper.dataset.qty = q;
     stepper.querySelector('.q').textContent = q;
     render();
   }
+
+  // ---- Offer panel (Buy 2 or more): quick add, live to the cart ----
+  var bmPanel = document.getElementById('bmsmPanel');
+  var bmList = null, bmMet = null, bmOpener = null;
+  function buildBmsm() {
+    var html = '';
+    BM.skus.forEach(function (sku) {
+      var p = CATALOG[sku];
+      html += '<div class="tile-c"><div class="ct" data-bsku="' + sku + '"><div class="row"><div class="ai"><img src="assets/' + p.img + '" alt=""></div>' +
+        '<div class="det"><span class="save" hidden></span><p class="name">' + p.name + '</p>' +
+        '<div class="ctl"><div class="bm-act">' +
+        '<button type="button" class="bm-add" data-bm-add>Add <img src="assets/grid_imgCartAdd.svg" alt=""></button>' +
+        '<div class="stepper bm-step" hidden><button type="button" data-bm-minus aria-label="Decrease"><img src="assets/cart_imgIcon4.svg" alt=""></button><span class="q">1</span><button type="button" data-bm-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>' +
+        '</div><div class="pr"><b></b></div></div></div></div></div></div>';
+    });
+    bmList = document.getElementById('bmList');
+    bmList.innerHTML = html;
+    // confetti pieces, scattered like the Figma frame
+    var conf = document.getElementById('bmConfetti'), seed = 7;
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    for (var i = 0; i < 52; i++) {
+      var el = document.createElement('i');
+      var w = 4.5 + rnd() * 6.5, left = rnd() * 268, top = rnd() * 134;
+      var round = rnd() < .22, slim = rnd() < .3;
+      if (round) el.className = 'rd';
+      el.style.cssText = 'left:' + left.toFixed(1) + 'px;top:' + top.toFixed(1) + 'px;width:' + w.toFixed(1) + 'px;height:' + (round ? w : w * (slim ? 0.4 : 0.8 + rnd() * 0.3)).toFixed(1) + 'px;' +
+        'background:' + (rnd() < .5 ? '#ffda00' : '#178841') + ';--o:' + (0.7 + rnd() * 0.3).toFixed(2) + ';--r:' + Math.round((rnd() - .5) * 720) + 'deg;' +
+        '--sx:' + Math.round(140 - left) + 'px;--sy:' + Math.round(70 - top) + 'px;--d:' + Math.round(rnd() * 70) + 'ms';
+      conf.appendChild(el);
+    }
+  }
+  function syncBmsm() {
+    if (!bmList) return;
+    var total = 0;
+    BM.skus.forEach(function (sku) { total += curQty(sku); });
+    var met = total >= BM.min;
+    var left = BM.min - total;
+    document.getElementById('bmTitle').textContent = met ? 'Enjoy more savings' : 'Buy ' + BM.min + ' or more for ' + money(BM.price) + ' each';
+    document.getElementById('bmSub').textContent = met ? 'You can now add more items at ' + money(BM.price) + ' each'
+      : 'Add ' + left + ' more item' + (left === 1 ? '' : 's') + ' to enjoy savings';
+    document.querySelectorAll('#bmGauge span').forEach(function (sp, i) { sp.classList.toggle('on', i < total); });
+    BM.skus.forEach(function (sku) {
+      var ct = bmList.querySelector('[data-bsku="' + sku + '"]'), q = curQty(sku);
+      ct.querySelector('.bm-add').hidden = q > 0;
+      var st = ct.querySelector('.bm-step'); st.hidden = q === 0;
+      st.querySelector('.q').textContent = q;
+      ct.querySelector('.pr b').textContent = money(met ? BM.price : BM.list);
+      var tag = ct.querySelector('.save'); tag.hidden = !met;
+      tag.textContent = 'Save ' + money(BM.list - BM.price);
+    });
+    document.getElementById('bmFoot').classList.toggle('show', met);
+    var conf = document.getElementById('bmConfetti');
+    conf.classList.toggle('show', met);
+    if (met && bmMet === false && bmPanel.classList.contains('open')) {   // just unlocked while looking at it: burst
+      var ry = bmPanel.querySelector('.ry');
+      conf.classList.remove('burst'); ry.classList.remove('punch'); void conf.offsetWidth;
+      conf.classList.add('burst'); ry.classList.add('punch');
+      setTimeout(function () { conf.classList.remove('burst'); ry.classList.remove('punch'); }, 1500);
+    }
+    bmMet = met;
+  }
+  function openBm(opener) {
+    bmOpener = opener || null;
+    syncBmsm();
+    bmPanel.classList.add('open'); drawer.classList.add('panel-open');
+    bmPanel.setAttribute('aria-hidden', 'false'); setInert(true);
+    setTimeout(function () { document.getElementById('bmBack').focus(); }, 60);
+  }
+  function closeBm(returnFocus) {
+    bmPanel.classList.remove('open'); drawer.classList.remove('panel-open');
+    bmPanel.setAttribute('aria-hidden', 'true'); setInert(false);
+    if (returnFocus !== false && bmOpener && document.contains(bmOpener) && bmOpener.focus) bmOpener.focus();
+  }
+  drawer.addEventListener('click', function (e) {
+    var promo = e.target.closest('.bmsm-promo');
+    if (promo && !bmPanel.contains(promo)) openBm(promo);
+  });
+  drawer.addEventListener('keydown', function (e) {
+    var promo = e.target.closest && e.target.closest('.bmsm-promo');
+    if (promo && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openBm(promo); }
+  });
+  document.getElementById('bmBack').addEventListener('click', function () { closeBm(); });
+  document.getElementById('bmUpdate').addEventListener('click', function () { closeBm(); });
+  document.getElementById('bmClose').addEventListener('click', function () { closeBm(false); close(); });
+  document.getElementById('bmList').addEventListener('click', function (e) {
+    var ct = e.target.closest('[data-bsku]');
+    if (!ct) return;
+    var sku = ct.dataset.bsku;
+    if (e.target.closest('[data-bm-add]')) setQty(sku, 1);
+    else if (e.target.closest('[data-bm-plus]')) setQty(sku, curQty(sku) + 1);
+    else if (e.target.closest('[data-bm-minus]')) setQty(sku, curQty(sku) - 1);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && bmPanel.classList.contains('open')) { e.stopImmediatePropagation(); closeBm(); }
+  }, true);
+
   document.querySelector('.grid').addEventListener('click', function (e) {
     var card = e.target.closest('.card[data-sku]');
     if (!card) return;
@@ -1371,6 +1569,7 @@ p{margin:0;}
     else if (e.target.closest('[data-gplus]')) setQty(sku, curQty(sku) + 1);
     else if (e.target.closest('[data-gminus]')) setQty(sku, curQty(sku) - 1);
   });
+  buildBmsm();
   render();
 
   // Keep the scrolling list clear of the footer, whatever height it currently is
