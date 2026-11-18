@@ -344,7 +344,14 @@ p{margin:0;}
   .fms { background: var(--bg-secondary); border-radius: 8px; padding: 8px 12px 8px 12px; display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; }
   .fms .tr { width: 46px; height: 46px; position: relative; flex: none; }
   .fms .tr img { position: absolute; left: calc(50% - 4.5px); transform: translateX(-50%); top: 8.14%; height: 83.7%; width: auto; aspect-ratio: 1; object-fit: contain; }
-  .fms .tx { flex: 1; }
+  .fms .tr img[hidden], .fms .tr .dtb[hidden] { display: none; }
+  /* Direct to boot car (Figma 5332:121454): 45.7 x 32.2 box, image cropped inside it */
+  .fms .tr .dtb { position: absolute; left: 0; top: 50%; width: 45.704px; height: 32.175px; margin-top: -16.09px; overflow: hidden; }
+  .fms .tr .dtb img { position: absolute; left: -6.27%; top: -5.68%; width: 112.54%; height: 109.09%; max-width: none; transform: none; aspect-ratio: auto; object-fit: fill; }
+  .fms .tx { flex: 1; min-width: 0; }
+  /* No time selected (Figma 5332:121457): green "Select a time" sits beside the chevron */
+  .fms .cta { display: none; flex: none; color: #008446; font-size: 16px; line-height: 24px; font-weight: 500; white-space: nowrap; margin-right: -8px; }
+  .fms[data-empty] .cta { display: block; }
   .fms .tx b { display: block; font-size: 16px; line-height: 24px; font-weight: 700; }
   .fms .tx span { color: var(--text-medium); }
   .fms .chev { width: 24px; height: 24px; position: relative; }
@@ -523,16 +530,18 @@ p{margin:0;}
   .ph button:hover { background: var(--bg-tertiary); }
   .ph button img.b { width: 16px; height: 16px; }
   .ph button img.c { width: 24px; height: 24px; }
-  .pc { flex: 1; overflow-y: auto; padding-bottom: 97px; display: flex; flex-direction: column; gap: 16px; }
+  .pc { flex: 1; overflow-y: auto; padding-bottom: 97px; display: flex; flex-direction: column; gap: 0; }
   .pc > * { flex: none; }
   /* Fulfilment method tabs + address row (Figma 5246:60783) */
   .fmsel { padding: 0 16px 8px; background: #fff; }
-  .method { display: flex; align-items: center; justify-content: center; background: #f9f9f9; border-radius: 24px; padding: 4px; overflow: hidden; }
-  .method button { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 4px 16px; border-radius: 24px; border: 2px solid transparent; text-align: left; color: var(--text-strong); }
+  .method { position: relative; display: flex; align-items: center; justify-content: center; background: #f9f9f9; border-radius: 24px; padding: 4px; overflow: hidden; }
+  /* The green selection: one element that slides between the tabs (positioned with % so it works while the panel is hidden) */
+  .method .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 24px; background: #008446; filter: drop-shadow(-1px 1px 3px rgba(23,28,31,.17)); pointer-events: none; will-change: transform; }
+  .method button { position: relative; z-index: 1; transition: color .2s ease; flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 4px 16px; border-radius: 24px; border: 2px solid transparent; text-align: left; color: var(--text-strong); }
   .method .mt { display: flex; flex-direction: column; }
   .method .mt b { font-weight: 400; font-size: 14px; line-height: 20px; white-space: nowrap; }
   .method .mt small { font-size: 12px; line-height: 16px; white-space: nowrap; }
-  .method button.on { background: #008446; border-color: #008446; color: #fff; filter: drop-shadow(-1px 1px 3px rgba(23,28,31,.17)); }
+  .method button.on { color: #fff; }
   .method button.on .mt b { font-weight: 500; }
   .mi-dtb { position: relative; width: 39.773px; height: 28px; overflow: hidden; flex: none; }
   .mi-dtb img { position: absolute; width: 112.54%; height: 109.09%; left: -6.27%; top: -5.68%; max-width: none; }
@@ -545,6 +554,13 @@ p{margin:0;}
   .loc small { font-size: 12px; line-height: 16px; color: var(--text-medium); }
   .loc b { font-weight: 400; font-size: 16px; line-height: 24px; color: var(--text-strong); }
   .loc .le { flex: none; font-size: 16px; line-height: 24px; color: #008446; text-decoration: underline; text-underline-position: from-font; }
+  /* Both methods live in the page; one block shows at a time. Address rows stack in one grid cell so they can cross-fade */
+  .locs { display: grid; }
+  .locs > .loc { grid-area: 1 / 1; }
+  .locs > .loc[hidden], .fmsblk[hidden] { display: none; }
+  .fmsblk { display: flex; flex-direction: column; gap: 16px; }
+  #fmsCollection { margin-top: 16px; }
+  #fmsCollection .slot { min-height: 56px; }
   .sugg { background: #f4ffdb; padding-bottom: 16px; }
   .sugg .h { display: flex; align-items: center; justify-content: space-between; padding: 16px; font-size: 16px; line-height: 24px; font-weight: 500; }
   .sugg .h img { width: 20px; height: 20px; }
@@ -579,7 +595,14 @@ p{margin:0;}
   .chips2 button:hover { background: #e1e3e4; }
   .chips2 button.on { background: #178841; color: #fff; }
   .chips2 img { width: 20px; height: 20px; }
-  .pf { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--border-weak); padding: 16px; }
+  .pf { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--border-weak); padding: 16px;
+    transform: translateY(100%); visibility: hidden; transition: transform .34s cubic-bezier(.2,.8,.2,1), visibility 0s linear .34s; }
+  .panel.open .pf.show { transform: none; visibility: visible; transition: transform .34s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+  @media (prefers-reduced-motion: reduce) {
+    .pf, .panel.open .pf.show { transform: none; }
+    .pf { opacity: 0; transition: opacity .12s ease, visibility 0s linear .12s; }
+    .panel.open .pf.show { opacity: 1; transition: opacity .12s ease, visibility 0s; }
+  }
   .pf button { width: 100%; height: 48px; border-radius: 8px; background: #178841; color: #fff; font-size: 16px; line-height: 24px; font-weight: 500; }
   .pf button:hover { background: #0d5127; }
   /* ---------- Offer panel: Buy 2 or more, quick add ---------- */
@@ -899,8 +922,9 @@ p{margin:0;}
     </div>
     <div class="dc-top">
       <button class="fms" id="fmsBtn" aria-haspopup="dialog" aria-controls="timePanel">
-        <span class="tr"><img src="assets/cart_imgDeliveryRoadBase.png" alt=""></span>
-        <span class="tx"><b id="fmsTitle">Delivery • Today 9am – 2pm</b><span>46 Smith St, Surry Hills, NSW, 2010</span></span>
+        <span class="tr"><img id="fmsIcoDel" src="assets/cart_imgDeliveryRoadBase.png" alt=""><span class="dtb" id="fmsIcoDtb" hidden><img src="assets/fms_iconDtbIsolated.png" alt=""></span></span>
+        <span class="tx"><b id="fmsTitle">Delivery • Today 9am – 2pm</b><span id="fmsSub">46 Smith St, Surry Hills, NSW, 2010</span></span>
+        <span class="cta">Select a time</span>
         <span class="chev"><img src="assets/cart_imgIcon.svg" alt=""></span>
       </button>
       <div class="edr"><img src="assets/cart_imgEverydayRewards.svg" alt=""><span class="a">Collect 123 pts</span><span class="dot">•</span><span class="a">$10 off next shop</span></div>
@@ -1025,12 +1049,18 @@ p{margin:0;}
     <div class="pc">
       <div>
         <div class="fmsel">
-          <div class="method">
-            <button type="button"><span class="mi-dtb" aria-hidden="true"><img src="assets/fms_iconDtbIsolated.png" alt=""></span><span class="mt"><b>Collection</b><small>$0 – $5</small></span></button>
-            <button type="button" class="on"><span class="mi-del" aria-hidden="true"><img class="rd" src="assets/fms_deliveryRoadBase.png" alt=""><img class="pt" src="assets/fms_image25.png" alt=""></span><span class="mt"><b>Delivery</b><small>$0 – $15</small></span></button>
+          <div class="method" role="tablist" aria-label="Fulfilment method">
+            <span class="pill" aria-hidden="true"></span>
+            <button type="button" role="tab" data-method="collection" aria-selected="false"><span class="mi-dtb" aria-hidden="true"><img src="assets/fms_iconDtbIsolated.png" alt=""></span><span class="mt"><b>Collection</b><small>$0 – $5</small></span></button>
+            <button type="button" role="tab" data-method="delivery" aria-selected="true" class="on"><span class="mi-del" aria-hidden="true"><img class="rd" src="assets/fms_deliveryRoadBase.png" alt=""><img class="pt" src="assets/fms_image25.png" alt=""></span><span class="mt"><b>Delivery</b><small>$0 – $15</small></span></button>
           </div>
-          <button type="button" class="loc"><span class="lt"><small>Deliver to</small><b>46 Smith St, Surry Hills, NSW, 2010</b></span><span class="le">Edit</span></button>
+          <div class="locs">
+            <button type="button" class="loc" id="locDelivery"><span class="lt"><small>Deliver to</small><b>46 Smith St, Surry Hills, NSW, 2010</b></span><span class="le">Edit</span></button>
+            <button type="button" class="loc" id="locCollection" hidden><span class="lt"><small>Direct to boot from</small><b>Balgowlah (Manly Vale)</b></span><span class="le">Edit</span></button>
+          </div>
         </div>
+      </div>
+      <div class="fmsblk" id="fmsDelivery">
         <div class="sugg">
           <div class="h"><span>Suggested for you</span><img src="assets/fms_info.svg" alt=""></div>
           <div class="list">
@@ -1038,7 +1068,6 @@ p{margin:0;}
             <button class="slot" data-label="Mon 3 Jul • 10am – 1pm" data-price="$14"><span class="si"><img src="assets/fms_image25.png" alt=""></span><span class="sc"><span class="t">Mon, 3 Jul • 10am – 1pm</span><span class="m">3 hrs</span></span><span class="p">$14</span></button>
           </div>
         </div>
-      </div>
       <div class="days"><button class="day on" data-day="Today"><span>Today</span><span class="c"><b>1</b><small>From<br>$14</small></span></button><button class="day" data-day="Sun"><span>Sun</span><span class="c"><b>2</b><small>From<br>$10</small></span></button><button class="day" data-day="Mon"><span>Mon</span><span class="c"><b>3</b><small>From<br>$8</small></span></button><button class="day" data-day="Tue"><span>Tue</span><span class="c"><b>4</b><small>From<br>$15</small></span></button><button class="day" data-day="Wed"><span>Wed</span><span class="c"><b>5</b><small>From<br>$15</small></span></button><button class="day" data-day="Thu"><span>Thu</span><span class="c"><b>6</b><small>From<br><span class="tag">$2</span></small></span></button><button class="day" data-day="Fri"><span>Fri</span><span class="c"><b>7</b><small>From<br>$8</small></span></button></div>
       <div class="tod">
         <div class="chips2">
@@ -1052,6 +1081,23 @@ p{margin:0;}
           <button class="slot" data-label="Today 10am – 11am" data-price="$15"><span class="si"><img src="assets/fms_image25.png" alt=""></span><span class="sc"><span class="t">10am – 11am</span><span class="m">1 hr • 75 item limit</span></span><span class="p">$15</span></button>
           <button class="slot" data-label="Today 10am – 1pm" data-price="$10"><span class="si"><img class="truck" src="assets/fms_deliveryRoadBase.png" alt=""></span><span class="sc"><span class="t">10am – 1pm</span><span class="m">3 hrs</span></span><span class="p">$10</span></button>
           <button class="slot" data-label="Today 11am – 2pm" data-price="$10"><span class="si"><img class="truck" src="assets/fms_deliveryRoadBase.png" alt=""></span><span class="sc"><span class="t">11am – 2pm</span><span class="m">3 hrs</span></span><span class="p">$10</span></button>
+        </div>
+      </div>
+      </div>
+      <div class="fmsblk" id="fmsCollection" hidden>
+        <div class="days"><button class="day on" data-day="Today"><span>Today</span><span class="c"><b>1</b><small>From<br>$5</small></span></button><button class="day" data-day="Sun"><span>Sun</span><span class="c"><b>2</b><small>From<br>$5</small></span></button><button class="day" data-day="Mon"><span>Mon</span><span class="c"><b>3</b><small>From<br>$5</small></span></button><button class="day" data-day="Tue"><span>Tue</span><span class="c"><b>4</b><small>From<br>$5</small></span></button><button class="day" data-day="Wed"><span>Wed</span><span class="c"><b>5</b><small>From<br>$5</small></span></button><button class="day" data-day="Thu"><span>Thu</span><span class="c"><b>6</b><small>From<br>$5</small></span></button><button class="day" data-day="Fri"><span>Fri</span><span class="c"><b>7</b><small>From<br>$5</small></span></button></div>
+        <div class="tod">
+          <div class="chips2">
+            <button class="on" type="button"><img src="assets/fms_tick.svg" alt="">Morning</button>
+            <button type="button"><img src="assets/fms_afternoon.svg" alt="">Afternoon</button>
+            <button type="button"><img src="assets/fms_evening.svg" alt="">Evening</button>
+          </div>
+          <div class="slots">
+            <button class="slot" data-label="Direct to boot Now" data-price="$5"><span class="sc"><span class="dn"><span class="ic"><img src="assets/fms_layer4.svg" alt=""></span><span>Direct to boot Now</span></span><span class="t">Ready within 30 mins</span><span class="m">60 item limit</span></span><span class="p">$5</span></button>
+            <button class="slot" data-label="Today 9am – 10am" data-price="$0"><span class="sc"><span class="t">9am – 10am</span></span><span class="p">$0</span></button>
+            <button class="slot" data-label="Today 10am – 11am" data-price="$0"><span class="sc"><span class="t">10am – 11am</span></span><span class="p">$0</span></button>
+            <button class="slot" data-label="Today 11am – 12pm" data-price="$0"><span class="sc"><span class="t">11am – 12pm</span></span><span class="p">$0</span></button>
+          </div>
         </div>
       </div>
     </div>
@@ -1601,9 +1647,105 @@ p{margin:0;}
   var panel = document.getElementById('timePanel');
   var fmsBtn = document.getElementById('fmsBtn');
   var fmsTitle = document.getElementById('fmsTitle');
+  var fmsSub = document.getElementById('fmsSub');
+  var STORE = 'Balgowlah (Manly Vale)', ADDRESS = '46 Smith St, Surry Hills, NSW, 2010';
+  // Cart row: icon, title, subtitle and CTA for a method; label null = no time chosen yet
+  function setFmsRow(method, label) {
+    var del = method === 'delivery';
+    document.getElementById('fmsIcoDel').hidden = !del;
+    document.getElementById('fmsIcoDtb').hidden = del;
+    fmsTitle.textContent = label ? (del ? 'Delivery' : 'Direct to boot') + ' • ' + label : (del ? 'Delivery' : 'Collection');
+    fmsSub.textContent = del ? ADDRESS : STORE;
+    fmsBtn.toggleAttribute('data-empty', !label);
+    var tx = fmsBtn.querySelector('.tx');
+    if (tx.animate) tx.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: 'ease-out' });
+  }
   var underlay = drawer.querySelectorAll('.dh, .dc, .df');
   function setInert(on) { underlay.forEach(function (el) { if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert'); }); }
+  // ---- Fulfilment method tabs, selection and Reserve ----
+  var reserveBtn = document.getElementById('reserveBtn');
+  var pf = panel.querySelector('.pf');
+  var tabs = panel.querySelectorAll('.method [data-method]');
+  var blocks = { delivery: document.getElementById('fmsDelivery'), collection: document.getElementById('fmsCollection') };
+  var locs = { delivery: document.getElementById('locDelivery'), collection: document.getElementById('locCollection') };
+  var state = { method: /[?&]notime=collection\b/.test(location.search) ? 'collection' : 'delivery', reserved: /[?&]notime\b/.test(location.search) ? null : { method: 'delivery', label: 'Today 9am – 2pm', slot: 'Today 9am – 2pm' } };
+  // Cart row text for a slot: "Now" slots read just "Now"; the suggested list's "Today • 10am" bullet is dropped
+  function rowLabel(slot) { var l = slot.dataset.label; return /Now$/.test(l) ? 'Now' : l.replace(' • ', ' '); }
+  // Reserve text: the time range when there is one, otherwise the slot's name ("Delivery Now")
+  function timeText(label) { var m = label.match(/\d{1,2}(?:am|pm) – \d{1,2}(?:am|pm)/); return m ? m[0] : label; }
+  function resetBlock(blk) {
+    blk.querySelectorAll('.slot.sel').forEach(function (x) { x.classList.remove('sel'); });
+    blk.querySelectorAll('.day').forEach(function (x, i) { x.classList.toggle('on', i === 0); });
+    blk.querySelectorAll('.chips2 button').forEach(function (x, i) { x.classList.toggle('on', i === 0); });
+  }
+  function updateReserve() {
+    var sel = blocks[state.method].querySelector('.slot.sel');
+    pf.toggleAttribute('inert', !sel);
+    pf.classList.toggle('show', !!sel);
+    if (sel) reserveBtn.textContent = 'Reserve ' + timeText(sel.dataset.label);
+  }
+  // Switching method always starts clean: no slot, first day, Morning, no Reserve button.
+  // animated = a tab tap (slide the pill and fade the content); otherwise it just snaps.
+  var pill = panel.querySelector('.method .pill');
+  var reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  // Fast out, a hair of overshoot, soft settle: the "liquid" ripple at the end
+  var SPRING = (window.CSS && CSS.supports('animation-timing-function', 'linear(0, 1)'))
+    ? 'linear(0, 0.42 9%, 0.8 18%, 0.96 27%, 1.012 36%, 1.014 42%, 1.004 52%, 0.998 62%, 1.001 76%, 1)'
+    : 'cubic-bezier(.22, 1, .36, 1)';
+  var EASE = 'cubic-bezier(.2,.8,.2,1)';
+  var swTimers = [];
+  function cancelSwitch() {
+    swTimers.forEach(clearTimeout); swTimers = [];
+    [pill].concat(Object.keys(blocks).map(function (k) { return blocks[k]; }), Object.keys(locs).map(function (k) { return locs[k]; }))
+      .forEach(function (el) { el.getAnimations({ subtree: true }).forEach(function (a) { a.cancel(); }); });
+  }
+  function showOnly(method) {
+    Object.keys(blocks).forEach(function (k) { blocks[k].hidden = k !== method; locs[k].hidden = k !== method; });
+  }
+  function animateSwitch(to, pillFrom) {
+    var rm = reduceMq.matches, other = to === 'delivery' ? 'collection' : 'delivery';
+    if (!rm && pill.animate) pill.animate([{ transform: pillFrom }, { transform: pill.style.transform }], { duration: 380, easing: SPRING });
+    if (blocks[other].hidden) { showOnly(to); return; }   // the target was already on screen (quick tap back)
+    // Address / store row: plain cross-fade
+    locs[to].hidden = false;
+    locs[other].animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: 'ease', fill: 'forwards' });
+    locs[to].animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease' });
+    swTimers.push(setTimeout(function () { locs[other].hidden = true; locs[other].getAnimations().forEach(function (a) { a.cancel(); }); }, 200));
+    // Times: old content fades out, then the new content fades in with a slight rise, a little staggered down the page
+    blocks[other].animate([{ opacity: 1 }, { opacity: 0 }], { duration: rm ? 60 : 150, easing: 'ease-out', fill: 'forwards' });
+    swTimers.push(setTimeout(function () {
+      blocks[other].hidden = true; blocks[other].getAnimations().forEach(function (a) { a.cancel(); });
+      blocks[to].hidden = false;
+      var rows = blocks[to].querySelectorAll(':scope > .sugg, :scope > .days, :scope .chips2, :scope .slots > .slot');
+      rows.forEach(function (el, i) {
+        el.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }],
+          { duration: rm ? 120 : 200, delay: rm ? 0 : Math.min(i, 6) * 25, easing: EASE, fill: 'backwards' });
+      });
+    }, rm ? 60 : 150));
+  }
+  function setMethod(method, animated) {
+    var prev = state.method, pillFrom = getComputedStyle(pill).transform;
+    cancelSwitch();
+    state.method = method;
+    tabs.forEach(function (b) { var on = b.dataset.method === method; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    resetBlock(blocks[method]);
+    updateReserve();
+    pill.style.transform = method === 'delivery' ? 'translateX(100%)' : 'none';
+    if (animated && prev !== method) animateSwitch(method, pillFrom); else showOnly(method);
+  }
+  // Opening shows the reserved method with its slot picked, or a clean current method when nothing is reserved
+  function restorePanel() {
+    var r = state.reserved;
+    setMethod(r ? r.method : state.method);
+    if (r) blocks[r.method].querySelectorAll('.slot').forEach(function (x) { if (x.dataset.label === r.slot) x.classList.add('sel'); });
+    updateReserve();
+  }
+  restorePanel();
+  if (!state.reserved) setFmsRow(state.method, null);   // ?notime / ?notime=collection: start with no time chosen
+  tabs.forEach(function (b) { b.addEventListener('click', function () { if (b.dataset.method !== state.method) setMethod(b.dataset.method, true); }); });
+
   function openPanel() {
+    restorePanel();
     panel.classList.add('open'); drawer.classList.add('panel-open');
     panel.setAttribute('aria-hidden', 'false'); setInert(true);
     setTimeout(function () { document.getElementById('panelBack').focus(); }, 60);
@@ -1617,16 +1759,20 @@ p{margin:0;}
   document.getElementById('panelBack').addEventListener('click', function () { closePanel(); });
   document.getElementById('panelClose').addEventListener('click', function () { closePanel(false); close(); });
   panel.addEventListener('click', function (e) {
-    var slot = e.target.closest('.slot');
-    if (slot) { panel.querySelectorAll('.slot.sel').forEach(function (x) { x.classList.remove('sel'); }); slot.classList.add('sel'); return; }
+    var blk = e.target.closest('.fmsblk');
+    if (!blk) return;
+    var slot = e.target.closest('.slots .slot');   // "Suggested for you" slots are display only
+    if (slot) { blk.querySelectorAll('.slot.sel').forEach(function (x) { x.classList.remove('sel'); }); slot.classList.add('sel'); updateReserve(); return; }
     var day = e.target.closest('.day');
-    if (day) { panel.querySelectorAll('.day.on').forEach(function (x) { x.classList.remove('on'); }); day.classList.add('on'); return; }
+    if (day) { blk.querySelectorAll('.day.on').forEach(function (x) { x.classList.remove('on'); }); day.classList.add('on'); return; }
     var chip = e.target.closest('.chips2 button');
-    if (chip) { panel.querySelectorAll('.chips2 button.on').forEach(function (x) { x.classList.remove('on'); }); chip.classList.add('on'); }
+    if (chip) { blk.querySelectorAll('.chips2 button.on').forEach(function (x) { x.classList.remove('on'); }); chip.classList.add('on'); }
   });
-  document.getElementById('reserveBtn').addEventListener('click', function () {
-    var sel = panel.querySelector('.slot.sel');
-    if (sel) fmsTitle.textContent = 'Delivery • ' + sel.dataset.label.replace(/^Today (?=\d)/, 'Today ');
+  reserveBtn.addEventListener('click', function () {
+    var sel = blocks[state.method].querySelector('.slot.sel');
+    if (!sel) return;
+    state.reserved = { method: state.method, label: rowLabel(sel), slot: sel.dataset.label };
+    setFmsRow(state.method, state.reserved.label);
     closePanel();
   });
   document.addEventListener('keydown', function (e) {
@@ -1635,7 +1781,7 @@ p{margin:0;}
 
   // Allow ?open to land with the cart already open
   if (location.search.indexOf('open') !== -1) open();
-  if (location.search.indexOf('time') !== -1) { open(); setTimeout(openPanel, 400); }
+  if (/[?&]time\b/.test(location.search)) { open(); setTimeout(openPanel, 400); }
 })();
 </script>
 </body>
