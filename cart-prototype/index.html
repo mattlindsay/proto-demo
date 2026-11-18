@@ -353,7 +353,13 @@ p{margin:0;}
   .edr img { width: 24px; height: 24px; margin-right: 0; }
   .edr .a { flex: 1; text-align: center; }
   .edr .dot { color: var(--text-medium); font-weight: 500; }
-  .cat { padding: 12px 16px 8px; font-size: 16px; line-height: 24px; font-weight: 500; color: var(--text-medium); background: #fff; }
+  .csec[hidden] { display: none; }
+  /* Category headings stick under the header (and under the spend tracker while it is showing, --sp-h);
+     each lives in its own section, so the next heading pushes the previous one out */
+  .cat { position: sticky; top: var(--sp-h, 0px); z-index: 1; padding: 12px 16px 8px; font-size: 16px; line-height: 24px; font-weight: 500; color: var(--text-medium); background: #fff; }
+  .cat { transition: box-shadow .3s ease; }
+  .cat.stuck { box-shadow: 0 6px 8px -6px rgba(0,0,0,.22); }   /* soft shadow only while items scroll beneath a pinned heading */
+  @media (prefers-reduced-motion: reduce) { .cat { transition: none; } }
   .tile-c { padding: 0 16px 12px; }
   .ct { position: relative; background: #fff; border: 1px solid var(--border-weak); border-radius: 12px; padding: 16px; }
   .ct .rm { position: absolute; right: -1px; top: -1px; width: 48px; height: 48px; display: grid; place-items: center; }
@@ -900,7 +906,8 @@ p{margin:0;}
       <div class="edr"><img src="assets/cart_imgEverydayRewards.svg" alt=""><span class="a">Collect 123 pts</span><span class="dot">•</span><span class="a">$10 off next shop</span></div>
     </div>
 
-    <div class="cat" data-cat="Pantry">Pantry</div>
+    <div class="csec" data-cat="Pantry">
+    <div class="cat">Pantry</div>
     <div class="tile-c">
       <div class="group">
         <div class="ct" data-item data-sku="tt-orig" data-unit="500">
@@ -925,8 +932,10 @@ p{margin:0;}
                 <div class="pr"><b></b><s hidden></s></div></div></div></div>
         </div>
     </div>
+    </div>
 
-    <div class="cat" data-cat="Drinks">Drinks</div>
+    <div class="csec" data-cat="Drinks">
+    <div class="cat">Drinks</div>
     <div class="tile-c">
       <div class="ct" data-item data-unit="200" data-was="450">
           <button class="rm" aria-label="Remove item"><span><img src="assets/cart_imgIcon1.svg" alt=""></span></button>
@@ -944,6 +953,7 @@ p{margin:0;}
               <div class="ctl"><div class="stepper" data-qty="1"><button data-minus aria-label="Decrease" disabled><img src="assets/cart_imgIcon2.svg" alt=""></button><span class="q">1</span><button data-plus aria-label="Increase"><img src="assets/cart_imgIcon3.svg" alt=""></button></div>
                 <div class="pr"><b></b><s hidden></s></div></div></div></div>
         </div>
+    </div>
     </div>
 
     <div class="btns"><button>Save as a list</button><button class="d" id="removeAll">Remove all</button></div>
@@ -1256,7 +1266,18 @@ p{margin:0;}
   })();
   roll.set(MIN_SPEND, false);
   var dcEl = drawer.querySelector('.dc');
-  dcEl.addEventListener('scroll', function () { spendEl.classList.toggle('stuck', dcEl.scrollTop > 0); }, { passive: true });
+  // A heading counts as pinned once it has reached the line just below the header / tracker
+  var stuckRaf = 0;
+  function updateStuck() {
+    var dc = drawer.querySelector('.dc');
+    var line = dc.getBoundingClientRect().top + spendEl.offsetHeight;
+    drawer.querySelectorAll('.csec:not([hidden]) .cat').forEach(function (c) {
+      c.classList.toggle('stuck', c.getBoundingClientRect().top <= line + 0.5);
+    });
+  }
+  function queueStuck() { if (!stuckRaf) stuckRaf = requestAnimationFrame(function () { stuckRaf = 0; updateStuck(); }); }
+  dcEl.addEventListener('scroll', function () { spendEl.classList.toggle('stuck', dcEl.scrollTop > 0); queueStuck(); }, { passive: true });
+  if (window.ResizeObserver) new ResizeObserver(function () { drawer.style.setProperty('--sp-h', spendEl.offsetHeight + 'px'); queueStuck(); }).observe(spendEl);
 
   var spendTimer = null;
   function collapseSpend() {
@@ -1337,11 +1358,7 @@ p{margin:0;}
     });
 
     // Hide a category heading once every tile under it has been removed
-    drawer.querySelectorAll('.cat').forEach(function (cat) {
-      var has = false, n = cat.nextElementSibling;
-      while (n && !n.classList.contains('cat')) { if (n.querySelector('[data-item]')) has = true; n = n.nextElementSibling; }
-      cat.hidden = !has;
-    });
+    drawer.querySelectorAll('.csec').forEach(function (sec) { sec.hidden = !sec.querySelector('[data-item]'); });
 
     // Keep each Fruit-page card in step with its cart tile: Add button at 0, stepper otherwise
     document.querySelectorAll('.card[data-sku]').forEach(function (card) {
@@ -1372,6 +1389,7 @@ p{margin:0;}
     savingEl.textContent = 'SAVING ' + money(saving);
     renderCount();
     syncBmsm();
+    if (typeof queueStuck === 'function') queueStuck();
   }
 
   function removeTile(item) {
@@ -1414,26 +1432,28 @@ p{margin:0;}
   }
   function tileHTML(sku) { return '<div class="tile-c">' + ctHTML(sku) + '</div>'; }
   var promoTpl = drawer.querySelector('.bmsm-promo').outerHTML;   // kept so the offer group can be rebuilt after it was emptied
+  // A category section: its sticky heading plus its tiles, kept in the CATS order
   function ensureCat(name) {
-    var cat = drawer.querySelector('.cat[data-cat="' + name + '"]');
-    if (cat) return cat;
-    cat = document.createElement('div');
-    cat.className = 'cat'; cat.dataset.cat = name; cat.textContent = name;
+    var sec = drawer.querySelector('.csec[data-cat="' + name + '"]');
+    if (sec) return sec;
+    sec = document.createElement('div');
+    sec.className = 'csec'; sec.dataset.cat = name;
+    sec.innerHTML = '<div class="cat">' + name + '</div>';
     var idx = CATS.indexOf(name), before = null;
-    drawer.querySelectorAll('.cat').forEach(function (c) { if (!before && CATS.indexOf(c.dataset.cat) > idx) before = c; });
+    drawer.querySelectorAll('.csec').forEach(function (c) { if (!before && CATS.indexOf(c.dataset.cat) > idx) before = c; });
     var ref = before || drawer.querySelector('.btns');
-    ref.parentNode.insertBefore(cat, ref);
-    return cat;
+    ref.parentNode.insertBefore(sec, ref);
+    return sec;
   }
   // The multi-buy offer group (tiles + offer row). Rebuilt on demand if every tile had been removed.
   function ensureGroup() {
     var g = drawer.querySelector('.group');
     if (g) return g;
-    var cat = ensureCat('Pantry');
+    var sec = ensureCat('Pantry');
     var wrap = document.createElement('div');
     wrap.className = 'tile-c';
     wrap.innerHTML = '<div class="group">' + promoTpl + '</div>';
-    cat.parentNode.insertBefore(wrap, cat.nextElementSibling);
+    sec.insertBefore(wrap, sec.firstElementChild.nextElementSibling);   // straight after the heading
     return wrap.firstChild;
   }
   function curQty(sku) {
@@ -1451,12 +1471,10 @@ p{margin:0;}
         item = tmp.firstElementChild;
         grp.insertBefore(item, grp.querySelector('.bmsm-promo'));
       } else {
-        var cat = ensureCat(CATALOG[sku].cat);
-        var end = cat.nextElementSibling;
-        while (end && !end.classList.contains('cat') && !end.classList.contains('btns')) end = end.nextElementSibling;
+        var sec = ensureCat(CATALOG[sku].cat);
         tmp.innerHTML = tileHTML(sku);
         var tile = tmp.firstElementChild;
-        end.parentNode.insertBefore(tile, end);
+        sec.appendChild(tile);
         item = tile.querySelector('[data-item]');
       }
     }
